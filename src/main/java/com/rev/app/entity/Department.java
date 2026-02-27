@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "department")
-public class Department
-{
+public class Department {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer departmentId;
@@ -17,6 +16,10 @@ public class Department
 
     public Department(String departmentName) {
         this.departmentName = departmentName;
+    }
+
+    public void setDepartmentId(Integer departmentId) {
+        this.departmentId = departmentId;
     }
 
     public Integer getDepartmentId() {

@@ -1,6 +1,5 @@
 package com.rev.app.entity;
 
-
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -21,22 +20,26 @@ public class User {
     @Column(nullable = false)
     private String passwordHash;
 
-    private String role;   // ADMIN, MANAGER, EMPLOYEE
+    private String role; // ADMIN, MANAGER, EMPLOYEE
 
     private Boolean isActive = true;
 
+    private LocalDateTime lastLogin;
+
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    public  User(){
+    public User() {
     }
 
-    public User(Integer userId, String employeeId, String email, String passwordHash, String role, Boolean isActive, LocalDateTime createdAt) {
+    public User(Integer userId, String employeeId, String email, String passwordHash,
+            String role, Boolean isActive, LocalDateTime lastLogin, LocalDateTime createdAt) {
         this.userId = userId;
         this.employeeId = employeeId;
         this.email = email;
         this.passwordHash = passwordHash;
         this.role = role;
         this.isActive = isActive;
+        this.lastLogin = lastLogin;
         this.createdAt = createdAt;
     }
 
@@ -80,19 +83,32 @@ public class User {
         this.role = role;
     }
 
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        this.isActive = active;
+    }
+
+    // Alias for tests
+    public boolean isActive() {
+        return isActive != null && isActive;
+    }
+
+    public LocalDateTime getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(LocalDateTime lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public Boolean getActive() {
-        return isActive;
-    }
-
-    public void setActive(Boolean active) {
-        isActive = active;
     }
 }
