@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard | Revature</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+        <a href="#" class="nav-brand">
+            <span>REVATURE</span>
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="#" class="active">My Portal</a></li>
+            <li><a href="#">Timesheets</a></li>
+            <li><a href="#">Leave Balance</a></li>
+            <li><a href="#">Company Calendar</a></li>
+            <li><a href="#">Settings</a></li>
+        </ul>
+
+        <div class="user-actions">
+            <div class="user-profile">
+                <div class="user-avatar" th:text="${user?.name != null ? user.name.substring(0,1) : 'U'}">E</div>
+                <span th:text="${user?.name != null ? user.name : 'Employee'}">Employee</span>
+            </div>
+            <a th:href="@{/logout}" class="logout-btn">Sign Out</a>
+        </div>
+
+        <button class="mobile-toggle">☰</button>
+    </nav>
+
+    <div class="container">
+        <header class="page-header">
+            <h1 class="page-title">Employee Overview</h1>
+            <p class="page-subtitle">Welcome back, <span th:text="${user?.name ?: 'User'}">Employee</span> (ID: <span
+                    th:text="${user?.employeeId ?: 'N/A'}">EMP001</span>). Here is what's happening today.</p>
+        </header>
+
+        <main>
+            <div class="card">
+                <div class="card-title">
+                    <h2>Attendance & Leave</h2>
+                    <span class="badge badge-employee" th:text="${user?.role ?: 'EMPLOYEE'}">EMPLOYEE</span>
+                </div>
+
+                <p style="color: var(--text-muted);">
+                    You have <strong style="color: var(--white);">14 days</strong> of paid leave remaining.
+                    Your last timesheet was approved on Friday.
+                </p>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">14</div>
+                        <div class="stat-label">Leave Balance</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">40h</div>
+                        <div class="stat-label">Hours This Week</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Notifications</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 30px;">
+                <div class="card-title">
+                    <h2>Quick Actions</h2>
+                </div>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <button
+                        style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">Apply
+                        for Leave</button>
+                    <button
+                        style="background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border); padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">Submit
+                        Timesheet</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Simple interactive script
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Employee Dashboard Loaded');
+
+            // Add hover effect to stat items
+            const statItems = document.querySelectorAll('.stat-item');
+            statItems.forEach(item => {
+                item.addEventListener('mouseenter', () => {
+                    item.style.borderColor = 'var(--primary)';
+                    item.style.background = 'rgba(242, 105, 37, 0.05)';
+                });
+                item.addEventListener('mouseleave', () => {
+                    item.style.borderColor = 'rgba(255, 255, 255, 0.05)';
+                    item.style.background = 'rgba(255, 255, 255, 0.02)';
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Revature</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+        <a href="#" class="nav-brand">
+            <span>REVATURE</span>
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="#" class="active">Admin Overview</a></li>
+            <li><a href="#">User Management</a></li>
+            <li><a href="#">System Analytics</a></li>
+            <li><a href="#">Security Logs</a></li>
+            <li><a href="#">Configuration</a></li>
+        </ul>
+
+        <div class="user-actions">
+            <div class="user-profile">
+                <div class="user-avatar" style="background: #d9534f;"
+                    th:text="${user?.name != null ? user.name.substring(0,1) : 'A'}">A</div>
+                <span th:text="${user?.name != null ? user.name : 'Admin'}">Admin</span>
+            </div>
+            <a th:href="@{/logout}" class="logout-btn">Sign Out</a>
+        </div>
+
+        <button class="mobile-toggle">☰</button>
+    </nav>
+
+    <div class="container">
+        <header class="page-header">
+            <h1 class="page-title">Admin Dashboard</h1>
+            <p class="page-subtitle">Welcome back, <span th:text="${user?.name ?: 'Admin'}">Admin</span> (ID: <span
+                    th:text="${user?.employeeId ?: 'N/A'}">ADM001</span>). System is running optimally.</p>
+        </header>
+
+        <main>
+            <div class="card">
+                <div class="card-title">
+                    <h2>System Status</h2>
+                    <span class="badge badge-admin" th:text="${user?.role ?: 'ADMIN'}">ADMIN</span>
+                </div>
+
+                <p style="color: var(--text-muted);">
+                    All core services are operational. Last security scan completed <strong
+                        style="color: var(--white);">2 hours ago</strong> with no issues.
+                </p>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">152</div>
+                        <div class="stat-label">Active Users</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">99.9%</div>
+                        <div class="stat-label">System Uptime</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">4</div>
+                        <div class="stat-label">Pending Reviews</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 30px;">
+                <div class="card-title">
+                    <h2>Administrative Tasks</h2>
+                </div>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <button
+                        style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">Manage
+                        Users</button>
+                    <button
+                        style="background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border); padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">View
+                        Audit Logs</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Admin Dashboard Loaded');
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Dashboard | Revature</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+        <a href="#" class="nav-brand">
+            <span>REVATURE</span>
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="#" class="active">Team Dashboard</a></li>
+            <li><a href="#">Performance</a></li>
+            <li><a href="#">Leave Approvals</a></li>
+            <li><a href="#">Project Timelines</a></li>
+            <li><a href="#">Reports</a></li>
+        </ul>
+
+        <div class="user-actions">
+            <div class="user-profile">
+                <div class="user-avatar" style="background: #5bc0de;"
+                    th:text="${user?.name != null ? user.name.substring(0,1) : 'M'}">M</div>
+                <span th:text="${user?.name != null ? user.name : 'Manager'}">Manager</span>
+            </div>
+            <a th:href="@{/logout}" class="logout-btn">Sign Out</a>
+        </div>
+
+        <button class="mobile-toggle">☰</button>
+    </nav>
+
+    <div class="container">
+        <header class="page-header">
+            <h1 class="page-title">Manager Portal</h1>
+            <p class="page-subtitle">Welcome back, <span th:text="${user?.name ?: 'Manager'}">Manager</span> (ID: <span
+                    th:text="${user?.employeeId ?: 'N/A'}">MGR001</span>). Here is your team's status.</p>
+        </header>
+
+        <main>
+            <div class="card">
+                <div class="card-title">
+                    <h2>Team Overview</h2>
+                    <span class="badge badge-manager" th:text="${user?.role ?: 'MANAGER'}">MANAGER</span>
+                </div>
+
+                <p style="color: var(--text-muted);">
+                    Your team has <strong style="color: var(--white);">12 members</strong>. 2 members are currently on
+                    leave.
+                    Project deadlines are on track for this sprint.
+                </p>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">Tasks Open</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">92%</div>
+                        <div class="stat-label">Efficiency</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">3</div>
+                        <div class="stat-label">Pending Approvals</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 30px;">
+                <div class="card-title">
+                    <h2>Manager Actions</h2>
+                </div>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <button
+                        style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">Approve
+                        Leaves</button>
+                    <button
+                        style="background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border); padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">Review
+                        Timesheets</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Manager Dashboard Loaded');
+        });
+    </script>
+</body>
+
+</html>
