@@ -20,23 +20,22 @@ public class AuthService {
         String cleanId = identifier.trim();
         String cleanPass = password.trim();
 
-        // 1. Try finding by Case-Insensitive Employee ID (e.g., "1", "4")
-        Optional<Employee> employeeOpt = employeeRepository.findByEmployeeIdIgnoreCase(cleanId);
+        Optional<Employee> employeeOpt = Optional.empty();
 
-        // 2. If not found, try finding by Case-Insensitive Email
-        if (employeeOpt.isEmpty()) {
-            employeeOpt = employeeRepository.findByEmailIgnoreCase(cleanId);
+        // 1. Try finding by database Primary Key (Long id) if input is numeric
+        try {
+            Long id = Long.parseLong(cleanId);
+            employeeOpt = employeeRepository.findById(id);
+        } catch (NumberFormatException e) {
+            // Not a number, skip to email search
+        } catch (org.springframework.dao.DataAccessException | jakarta.persistence.PersistenceException e) {
+            // Database-level numeric conversion error (e.g. ORA-01722)
+            // Fallback to email search
         }
 
-        // 3. Fallback: try finding by database Primary Key (Long id) if input is
-        // numeric
+        // 2. If not found by ID, try finding by Case-Insensitive Email
         if (employeeOpt.isEmpty()) {
-            try {
-                Long id = Long.parseLong(cleanId);
-                employeeOpt = employeeRepository.findById(id);
-            } catch (NumberFormatException e) {
-                // Not a number, skip
-            }
+            employeeOpt = employeeRepository.findByEmailIgnoreCase(cleanId);
         }
 
         if (employeeOpt.isPresent()) {
@@ -44,7 +43,9 @@ public class AuthService {
             // Case-sensitive exact password check
             if (employee.getPassword().equals(cleanPass)) {
                 return employee;
+            } else {
             }
+        } else {
         }
         return null;
     }

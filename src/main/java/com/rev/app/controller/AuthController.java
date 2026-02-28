@@ -2,6 +2,7 @@ package com.rev.app.controller;
 
 import com.rev.app.entity.Employee;
 import com.rev.app.service.AuthService;
+import com.rev.app.service.EmployeeService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,9 +10,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import java.util.List;
 
 @Controller
 public class AuthController {
+
+    @Autowired
+    private EmployeeService employeeService;
 
     @Autowired
     private AuthService authService;
@@ -53,6 +58,11 @@ public class AuthController {
             return "redirect:/";
         }
         model.addAttribute("user", user);
+        List<Employee> allEmployees = employeeService.getAllEmployees();
+        model.addAttribute("totalEmployees", allEmployees.size());
+        model.addAttribute("recentEmployees",
+                allEmployees.size() > 5 ? allEmployees.subList(allEmployees.size() - 5, allEmployees.size())
+                        : allEmployees);
         return "admin_dashboard";
     }
 
