@@ -10,88 +10,109 @@
 </head>
 
 <body>
-    <!-- Top Navigation Bar -->
-    <nav class="navbar">
-        <a href="#" class="nav-brand">
-            <span>REVATURE</span>
-        </a>
-
-        <ul class="nav-links">
-            <li><a href="#" class="active">Admin Overview</a></li>
-            <li><a href="#">User Management</a></li>
-            <li><a href="#">System Analytics</a></li>
-            <li><a href="#">Security Logs</a></li>
-            <li><a href="#">Configuration</a></li>
-        </ul>
-
-        <div class="user-actions">
-            <div class="user-profile">
-                <div class="user-avatar" style="background: #d9534f;"
-                    th:text="${user?.name != null ? user.name.substring(0,1) : 'A'}">A</div>
-                <span th:text="${user?.name != null ? user.name : 'Admin'}">Admin</span>
+    <div class="dashboard-wrapper">
+        <!-- Dashboard Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a th:href="@{/admin/dashboard}" class="sidebar-logo">REVATURE</a>
             </div>
-            <a th:href="@{/logout}" class="logout-btn">Sign Out</a>
-        </div>
 
-        <button class="mobile-toggle">☰</button>
-    </nav>
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a th:href="@{/admin/dashboard}" class="menu-link active">
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/admin/employees}" class="menu-link">
+                        <span>Manage Employees</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/admin/add-employee}" class="menu-link">
+                        <span>Add Employee</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <span>Audit Logs</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
 
-    <div class="container">
-        <header class="page-header">
-            <h1 class="page-title">Admin Dashboard</h1>
-            <p class="page-subtitle">Welcome back, <span th:text="${user?.name ?: 'Admin'}">Admin</span> (ID: <span
-                    th:text="${user?.employeeId ?: 'N/A'}">ADM001</span>). System is running optimally.</p>
-        </header>
+            <div class="sidebar-footer">
+                <a th:href="@{/logout}" class="btn btn-logout" style="width: 100%; text-align: center;">Logout</a>
+            </div>
+        </aside>
 
-        <main>
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <span th:text="${user.name}">Admin User</span>
+                    <div class="avatar" th:text="${user.name.substring(0,1)}">A</div>
+                </div>
+            </header>
+
+            <div class="page-header">
+                <h1 class="page-title">Admin Overview</h1>
+                <p class="page-subtitle">Welcome back, managing the Revature ecosystem.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-value" th:text="${totalEmployees}">0</div>
+                    <div class="stat-label">Total Employees</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Pending Leaves</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🛡️</div>
+                    <div class="stat-value">99.9%</div>
+                    <div class="stat-label">System Uptime</div>
+                </div>
+            </div>
+
             <div class="card">
-                <div class="card-title">
-                    <h2>System Status</h2>
-                    <span class="badge badge-admin" th:text="${user?.role ?: 'ADMIN'}">ADMIN</span>
+                <div class="card-header">
+                    <h2 class="page-title" style="font-size: 20px;">Recent Team Members</h2>
+                    <a th:href="@{/admin/employees}" class="btn btn-primary">View All</a>
                 </div>
-
-                <p style="color: var(--text-muted);">
-                    All core services are operational. Last security scan completed <strong
-                        style="color: var(--white);">2 hours ago</strong> with no issues.
-                </p>
-
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-value">152</div>
-                        <div class="stat-label">Active Users</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">99.9%</div>
-                        <div class="stat-label">System Uptime</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">4</div>
-                        <div class="stat-label">Pending Reviews</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card" style="margin-top: 30px;">
-                <div class="card-title">
-                    <h2>Administrative Tasks</h2>
-                </div>
-                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                    <button
-                        style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">Manage
-                        Users</button>
-                    <button
-                        style="background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border); padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">View
-                        Audit Logs</button>
+                <div style="margin-top: 15px; overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border); text-align: left;">
+                                <th style="padding: 10px; font-size: 12px; color: var(--text-muted);">ID</th>
+                                <th style="padding: 10px; font-size: 12px; color: var(--text-muted);">NAME</th>
+                                <th style="padding: 10px; font-size: 12px; color: var(--text-muted);">DEPT</th>
+                                <th style="padding: 10px; font-size: 12px; color: var(--text-muted);">ROLE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="emp : ${recentEmployees}" style="border-bottom: 1px solid var(--border);">
+                                <td th:text="${emp.id}" style="padding: 10px; font-weight: 600;">1</td>
+                                <td th:text="${emp.firstName + ' ' + emp.lastName}" style="padding: 10px;">User</td>
+                                <td th:text="${emp.department ?: 'N/A'}" style="padding: 10px;">N/A</td>
+                                <td style="padding: 10px;">
+                                    <span th:text="${emp.role}" class="status-badge"
+                                        style="background: #eef2f6; color: #64748b; padding: 2px 8px; border-radius: 4px; font-size: 11px;">ROLE</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </main>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('Admin Dashboard Loaded');
-        });
-    </script>
 </body>
 
 </html>

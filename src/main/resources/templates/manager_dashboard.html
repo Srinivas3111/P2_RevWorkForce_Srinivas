@@ -10,89 +10,96 @@
 </head>
 
 <body>
-    <!-- Top Navigation Bar -->
-    <nav class="navbar">
-        <a href="#" class="nav-brand">
-            <span>REVATURE</span>
-        </a>
-
-        <ul class="nav-links">
-            <li><a href="#" class="active">Team Dashboard</a></li>
-            <li><a href="#">Performance</a></li>
-            <li><a href="#">Leave Approvals</a></li>
-            <li><a href="#">Project Timelines</a></li>
-            <li><a href="#">Reports</a></li>
-        </ul>
-
-        <div class="user-actions">
-            <div class="user-profile">
-                <div class="user-avatar" style="background: #5bc0de;"
-                    th:text="${user?.name != null ? user.name.substring(0,1) : 'M'}">M</div>
-                <span th:text="${user?.name != null ? user.name : 'Manager'}">Manager</span>
+    <div class="dashboard-wrapper">
+        <!-- Dashboard Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="sidebar-logo">REVATURE</a>
             </div>
-            <a th:href="@{/logout}" class="logout-btn">Sign Out</a>
-        </div>
 
-        <button class="mobile-toggle">☰</button>
-    </nav>
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a href="#" class="menu-link active">
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <span>Team Requests</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <span>My Team</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <span>Holiday Calendar</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
 
-    <div class="container">
-        <header class="page-header">
-            <h1 class="page-title">Manager Portal</h1>
-            <p class="page-subtitle">Welcome back, <span th:text="${user?.name ?: 'Manager'}">Manager</span> (ID: <span
-                    th:text="${user?.employeeId ?: 'N/A'}">MGR001</span>). Here is your team's status.</p>
-        </header>
+            <div class="sidebar-footer">
+                <a th:href="@{/logout}" class="btn btn-logout" style="width: 100%; text-align: center;">Logout</a>
+            </div>
+        </aside>
 
-        <main>
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <span th:text="${user.name}">Manager Name</span>
+                    <div class="avatar" th:text="${user.name.substring(0,1)}">M</div>
+                </div>
+            </header>
+
+            <div class="page-header">
+                <h1 class="page-title">Manager Dashboard</h1>
+                <p class="page-subtitle">Welcome back, <span th:text="${user.name}">Manager</span>. Overseeing team
+                    productivity.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Team Members</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📝</div>
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Pending Approvals</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🏖️</div>
+                    <div class="stat-value">2</div>
+                    <div class="stat-label">Team on Leave Today</div>
+                </div>
+            </div>
+
             <div class="card">
-                <div class="card-title">
-                    <h2>Team Overview</h2>
-                    <span class="badge badge-manager" th:text="${user?.role ?: 'MANAGER'}">MANAGER</span>
+                <div class="card-header">
+                    <h2 class="page-title" style="font-size: 20px;">Team Overview</h2>
+                    <a href="#" class="btn btn-primary">Manager Portal</a>
                 </div>
-
-                <p style="color: var(--text-muted);">
-                    Your team has <strong style="color: var(--white);">12 members</strong>. 2 members are currently on
-                    leave.
-                    Project deadlines are on track for this sprint.
+                <p class="page-subtitle">
+                    Current team efficiency is <strong style="color: var(--primary);">92%</strong>. All project
+                    deadlines are currently on track.
                 </p>
-
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-value">8</div>
-                        <div class="stat-label">Tasks Open</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">92%</div>
-                        <div class="stat-label">Efficiency</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">3</div>
-                        <div class="stat-label">Pending Approvals</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card" style="margin-top: 30px;">
-                <div class="card-title">
-                    <h2>Manager Actions</h2>
-                </div>
-                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                    <button
-                        style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">Approve
-                        Leaves</button>
-                    <button
-                        style="background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border); padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">Review
+                <div style="margin-top: 20px; display: flex; gap: 10px;">
+                    <button class="btn btn-primary">Approve Leaves</button>
+                    <button class="btn" style="border: 1px solid var(--border); color: var(--text-main);">Review
                         Timesheets</button>
                 </div>
             </div>
         </main>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('Manager Dashboard Loaded');
-        });
-    </script>
 </body>
 
 </html>

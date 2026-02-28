@@ -10,101 +10,94 @@
 </head>
 
 <body>
-    <!-- Top Navigation Bar -->
-    <nav class="navbar">
-        <a href="#" class="nav-brand">
-            <span>REVATURE</span>
-        </a>
-
-        <ul class="nav-links">
-            <li><a href="#" class="active">My Portal</a></li>
-            <li><a href="#">Timesheets</a></li>
-            <li><a href="#">Leave Balance</a></li>
-            <li><a href="#">Company Calendar</a></li>
-            <li><a href="#">Settings</a></li>
-        </ul>
-
-        <div class="user-actions">
-            <div class="user-profile">
-                <div class="user-avatar" th:text="${user?.name != null ? user.name.substring(0,1) : 'U'}">E</div>
-                <span th:text="${user?.name != null ? user.name : 'Employee'}">Employee</span>
+    <div class="dashboard-wrapper">
+        <!-- Dashboard Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="sidebar-logo">REVATURE</a>
             </div>
-            <a th:href="@{/logout}" class="logout-btn">Sign Out</a>
-        </div>
 
-        <button class="mobile-toggle">☰</button>
-    </nav>
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a href="#" class="menu-link active">
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <span>Leave Applications</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <span>Holiday Calendar</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <span>My Profile</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
 
-    <div class="container">
-        <header class="page-header">
-            <h1 class="page-title">Employee Overview</h1>
-            <p class="page-subtitle">Welcome back, <span th:text="${user?.name ?: 'User'}">Employee</span> (ID: <span
-                    th:text="${user?.employeeId ?: 'N/A'}">EMP001</span>). Here is what's happening today.</p>
-        </header>
+            <div class="sidebar-footer">
+                <a th:href="@{/logout}" class="btn btn-logout" style="width: 100%; text-align: center;">Logout</a>
+            </div>
+        </aside>
 
-        <main>
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <span th:text="${user.name}">Employee Name</span>
+                    <div class="avatar" th:text="${user.name.substring(0,1)}">E</div>
+                </div>
+            </header>
+
+            <div class="page-header">
+                <h1 class="page-title">Employee Portal</h1>
+                <p class="page-subtitle">Welcome back, <span th:text="${user.name}">Employee</span>. Manage your work
+                    and leaves.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-value">14</div>
+                    <div class="stat-label">Leave Balance</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-value">40h</div>
+                    <div class="stat-label">Hours This Week</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏳</div>
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Notifications</div>
+                </div>
+            </div>
+
             <div class="card">
-                <div class="card-title">
-                    <h2>Attendance & Leave</h2>
-                    <span class="badge badge-employee" th:text="${user?.role ?: 'EMPLOYEE'}">EMPLOYEE</span>
+                <div class="card-header">
+                    <h2 class="page-title" style="font-size: 20px;">My Portal</h2>
+                    <a href="#" class="btn btn-primary">Apply for Leave</a>
                 </div>
-
-                <p style="color: var(--text-muted);">
-                    You have <strong style="color: var(--white);">14 days</strong> of paid leave remaining.
-                    Your last timesheet was approved on Friday.
+                <p class="page-subtitle">
+                    The system is performing optimally. Last backup completed successfully at 04:00 AM today.
                 </p>
-
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-value">14</div>
-                        <div class="stat-label">Leave Balance</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">40h</div>
-                        <div class="stat-label">Hours This Week</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">0</div>
-                        <div class="stat-label">Notifications</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card" style="margin-top: 30px;">
-                <div class="card-title">
-                    <h2>Quick Actions</h2>
-                </div>
-                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                    <button
-                        style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">Apply
-                        for Leave</button>
-                    <button
-                        style="background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border); padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">Submit
+                <div style="margin-top: 20px;">
+                    <button class="btn" style="border: 1px solid var(--border); color: var(--text-main);">Submit
                         Timesheet</button>
                 </div>
             </div>
         </main>
     </div>
-
-    <script>
-        // Simple interactive script
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('Employee Dashboard Loaded');
-
-            // Add hover effect to stat items
-            const statItems = document.querySelectorAll('.stat-item');
-            statItems.forEach(item => {
-                item.addEventListener('mouseenter', () => {
-                    item.style.borderColor = 'var(--primary)';
-                    item.style.background = 'rgba(242, 105, 37, 0.05)';
-                });
-                item.addEventListener('mouseleave', () => {
-                    item.style.borderColor = 'rgba(255, 255, 255, 0.05)';
-                    item.style.background = 'rgba(255, 255, 255, 0.02)';
-                });
-            });
-        });
-    </script>
 </body>
 
 </html>
