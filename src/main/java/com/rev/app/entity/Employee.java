@@ -1,189 +1,101 @@
 package com.rev.app.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
 
 @Entity
-@Table(name = "employee")
+@Table(name = "employees")
 public class Employee {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer empId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(unique = true, nullable = false)
+    private String employeeId;
 
-    private String firstName;
-    private String lastName;
-    private String phone;
-    private String address;
-    private String emergencyContact;
+    @Column(nullable = false)
+    private String name;
 
-    private LocalDate dob;
-    private LocalDate joiningDate;
-    private String gender; // MALE, FEMALE, OTHER
+    @Column(unique = true, nullable = false)
+    private String email;
 
-    @ManyToOne
-    @JoinColumn(name = "department_id")
-    private Department department;
+    @Column(nullable = false)
+    private String password;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "designation_id")
-    private Designation designation;
+    @Column(nullable = false)
+    private String role; // ADMIN, MANAGER, EMPLOYEE
 
-    @ManyToOne
-    @JoinColumn(name = "manager_id")
-    private Employee manager;
-
-    private Double salary;
-
-    private String status; // ACTIVE, INACTIVE, TERMINATED
-
+    // Default Constructor
     public Employee() {
     }
 
-    public Employee(User user, String firstName, String lastName, String phone,
-            String address, String emergencyContact, LocalDate dob,
-            LocalDate joiningDate, String gender, Department department, Designation designation,
-            Employee manager, Double salary, String status) {
-
-        this.user = user;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phone = phone;
-        this.address = address;
-        this.emergencyContact = emergencyContact;
-        this.dob = dob;
-        this.joiningDate = joiningDate;
-        this.gender = gender;
-        this.department = department;
-        this.designation = designation; // ✅ Now correct
-        this.manager = manager;
-        this.salary = salary;
-        this.status = status;
+    // All-args Constructor
+    public Employee(Long id, String employeeId, String name, String email, String password, String role) {
+        this.id = id;
+        this.employeeId = employeeId;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
     }
 
-    // Getters & Setters
-
-    public String getGender() {
-        return gender;
+    // Getters and Setters
+    public Long getId() {
+        return id;
     }
 
-    public void setGender(String gender) {
-        this.gender = gender;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public Integer getEmpId() {
-        return empId;
+    public String getEmployeeId() {
+        return employeeId;
     }
 
-    public void setEmpId(Integer empId) {
-        this.empId = empId;
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
     }
 
-    public User getUser() {
-        return user;
+    public String getName() {
+        return name;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getEmail() {
+        return email;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getPassword() {
+        return password;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getRole() {
+        return role;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setRole(String role) {
+        this.role = role;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getEmergencyContact() {
-        return emergencyContact;
-    }
-
-    public void setEmergencyContact(String emergencyContact) {
-        this.emergencyContact = emergencyContact;
-    }
-
-    public LocalDate getDob() {
-        return dob;
-    }
-
-    public void setDob(LocalDate dob) {
-        this.dob = dob;
-    }
-
-    public LocalDate getJoiningDate() {
-        return joiningDate;
-    }
-
-    public void setJoiningDate(LocalDate joiningDate) {
-        this.joiningDate = joiningDate;
-    }
-
-    public Department getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(Department department) {
-        this.department = department;
-    }
-
-    public Designation getDesignation() {
-        return designation;
-    }
-
-    public void setDesignation(Designation designation) {
-        this.designation = designation;
-    }
-
-    public Employee getManager() {
-        return manager;
-    }
-
-    public void setManager(Employee manager) {
-        this.manager = manager;
-    }
-
-    public Double getSalary() {
-        return salary;
-    }
-
-    public void setSalary(Double salary) {
-        this.salary = salary;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id=" + id +
+                ", employeeId='" + employeeId + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", role='" + role + '\'' +
+                '}';
     }
 }
