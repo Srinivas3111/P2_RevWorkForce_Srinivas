@@ -241,19 +241,30 @@
 <body>
     <div class="dashboard-wrapper">
         <!-- Dashboard Sidebar -->
+<<<<<<< HEAD
         <aside class="sidebar" th:fragment="sidebar">
             <div class="sidebar-header">
                 <a th:href="@{/manager/dashboard}" class="sidebar-logo">REVATURE</a>
+=======
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="sidebar-logo">REVATURE</a>
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
             </div>
 
             <ul class="sidebar-menu">
                 <li class="menu-item">
+<<<<<<< HEAD
                     <a th:href="@{/manager/dashboard}" class="menu-link"
                         th:classappend="${currentUri == '/manager/dashboard'} ? ' active'">
+=======
+                    <a href="#" class="menu-link active">
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
                         <span>Dashboard</span>
                     </a>
                 </li>
                 <li class="menu-item">
+<<<<<<< HEAD
                     <a th:href="@{/manager/profile}" class="menu-link"
                         th:classappend="${currentUri == '/manager/profile'} ? ' active'">
                         <span>My Profile</span>
@@ -286,10 +297,24 @@
                 <li class="menu-item">
                     <a th:href="@{/employee/holiday-calendar}" class="menu-link"
                         th:classappend="${currentUri == '/employee/holiday-calendar'} ? ' active'">
+=======
+                    <a href="#" class="menu-link">
+                        <span>Team Requests</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <span>My Team</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
                         <span>Holiday Calendar</span>
                     </a>
                 </li>
                 <li class="menu-item">
+<<<<<<< HEAD
                     <a th:href="@{/manager/performance-reviews}" class="menu-link"
                         th:classappend="${currentUri == '/manager/performance-reviews'} ? ' active'">
                         <span>Performance Reviews</span>
@@ -311,12 +336,20 @@
                     <a th:href="@{/manager/directory}" class="menu-link"
                         th:classappend="${currentUri == '/manager/directory'} ? ' active'">
                         <span>Employee Directory</span>
+=======
+                    <a href="#" class="menu-link">
+                        <span>Settings</span>
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
                     </a>
                 </li>
             </ul>
 
             <div class="sidebar-footer">
+<<<<<<< HEAD
                 <a th:href="@{/logout}" class="btn btn-logout">Logout</a>
+=======
+                <a th:href="@{/logout}" class="btn btn-logout" style="width: 100%; text-align: center;">Logout</a>
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
             </div>
         </aside>
 
@@ -324,6 +357,7 @@
         <main class="main-content">
             <header class="top-bar">
                 <div class="user-info">
+<<<<<<< HEAD
                     <a class="notif-bell-wrap" th:href="@{/notifications}" title="Notifications">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -334,6 +368,8 @@
                             th:text="${unreadCount > 0 ? unreadCount : ''}"
                             th:if="${unreadCount != null and unreadCount > 0}"></span>
                     </a>
+=======
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
                     <span th:text="${user.name}">Manager Name</span>
                     <div class="avatar" th:text="${user.name.substring(0,1)}">M</div>
                 </div>
@@ -348,11 +384,16 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-icon">👥</div>
+<<<<<<< HEAD
                     <div class="stat-value" th:text="${teamSize}">0</div>
+=======
+                    <div class="stat-value">12</div>
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
                     <div class="stat-label">Team Members</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">📝</div>
+<<<<<<< HEAD
                     <div class="stat-value" th:text="${pendingTeamRequests}">0</div>
                     <div class="stat-label">Pending Approvals</div>
                 </div>
@@ -360,19 +401,33 @@
                     <div class="stat-icon">🎯</div>
                     <div class="stat-value" th:text="${goalsPendingComment}">0</div>
                     <div class="stat-label">Goals Pending Comment</div>
+=======
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Pending Approvals</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🏖️</div>
+                    <div class="stat-value">2</div>
+                    <div class="stat-label">Team on Leave Today</div>
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-header">
                     <h2 class="page-title" style="font-size: 20px;">Team Overview</h2>
+<<<<<<< HEAD
                     <a th:href="@{/manager/team-structure}" class="btn btn-primary">Team Structure</a>
+=======
+                    <a href="#" class="btn btn-primary">Manager Portal</a>
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
                 </div>
                 <p class="page-subtitle">
                     Current team efficiency is <strong style="color: var(--primary);">92%</strong>. All project
                     deadlines are currently on track.
                 </p>
                 <div style="margin-top: 20px; display: flex; gap: 10px;">
+<<<<<<< HEAD
                     <a th:href="@{/manager/team-requests}" class="btn btn-primary">View Team Requests</a>
                     <a th:href="@{/manager/team-leave-balance}" class="btn"
                         style="border: 1px solid var(--border); color: var(--text-main);">View Leave Balance</a>
@@ -492,6 +547,11 @@
                         </div>
                         <p class="announcement-item-message" th:text="${a.message}">Announcement message.</p>
                     </article>
+=======
+                    <button class="btn btn-primary">Approve Leaves</button>
+                    <button class="btn" style="border: 1px solid var(--border); color: var(--text-main);">Review
+                        Timesheets</button>
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
                 </div>
             </div>
         </main>

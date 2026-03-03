@@ -15,7 +15,11 @@ public class EmployeeLeaveHistoryMapper {
         dto.setId(history.getId());
         if (history.getEmployee() != null) {
             dto.setEmployeeId(history.getEmployee().getId());
+<<<<<<< HEAD
             dto.setEmployeeName(history.getEmployee().getName());
+=======
+            dto.setEmployeeName(history.getEmployee().getFirstName() + " " + history.getEmployee().getLastName());
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
         }
         if (history.getLeaveType() != null) {
             dto.setLeaveTypeId(history.getLeaveType().getId());

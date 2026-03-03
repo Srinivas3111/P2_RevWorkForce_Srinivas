@@ -4,7 +4,10 @@ import com.rev.app.dto.EmployeeDTO;
 import com.rev.app.entity.Employee;
 import com.rev.app.service.AuthService;
 import com.rev.app.service.EmployeeService;
+<<<<<<< HEAD
 import jakarta.servlet.http.HttpServletRequest;
+=======
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import java.util.List;
 
 @Controller
 public class AuthController {
@@ -90,6 +94,44 @@ public class AuthController {
         }
     }
 
+<<<<<<< HEAD
+=======
+    @GetMapping("/admin/dashboard")
+    public String adminDashboard(HttpSession session, Model model) {
+        Employee user = (Employee) session.getAttribute("loggedInUser");
+        if (user == null || !"ADMIN".equalsIgnoreCase(user.getRole())) {
+            return "redirect:/";
+        }
+        model.addAttribute("user", user);
+        List<Employee> allEmployees = employeeService.getAllEmployees();
+        model.addAttribute("totalEmployees", allEmployees.size());
+        model.addAttribute("recentEmployees",
+                allEmployees.size() > 5 ? allEmployees.subList(allEmployees.size() - 5, allEmployees.size())
+                        : allEmployees);
+        return "admin_dashboard";
+    }
+
+    @GetMapping("/manager/dashboard")
+    public String managerDashboard(HttpSession session, Model model) {
+        Employee user = (Employee) session.getAttribute("loggedInUser");
+        if (user == null || !"MANAGER".equalsIgnoreCase(user.getRole())) {
+            return "redirect:/";
+        }
+        model.addAttribute("user", user);
+        return "manager_dashboard";
+    }
+
+    @GetMapping("/employee/dashboard")
+    public String employeeDashboard(HttpSession session, Model model) {
+        Employee user = (Employee) session.getAttribute("loggedInUser");
+        if (user == null || !"EMPLOYEE".equalsIgnoreCase(user.getRole())) {
+            return "redirect:/";
+        }
+        model.addAttribute("user", user);
+        return "employee_dashboard";
+    }
+
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();

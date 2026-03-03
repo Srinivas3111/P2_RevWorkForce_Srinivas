@@ -4,15 +4,23 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "employees")
+@Table(name = "employees_new")
 public class Employee {
 
     @Id
     @Column(name = "employee_id")
     private Long id;
 
+<<<<<<< HEAD
     @Column(nullable = false)
     private String firstName;
+=======
+    @Column(nullable = false)
+    private String firstName;
+
+    @Column(nullable = false)
+    private String lastName;
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -20,9 +28,12 @@ public class Employee {
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
+<<<<<<< HEAD
     @Column(name = "emergency_contact_number")
     private String emergencyContactNumber;
 
+=======
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
     @Column(name = "gender")
     private String gender;
 
@@ -72,10 +83,25 @@ public class Employee {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+<<<<<<< HEAD
     }
 
     public String getName() {
         return firstName != null ? firstName : "";
+=======
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getName() {
+        return firstName + " " + lastName;
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
     }
 
     public String getEmail() {
@@ -94,6 +120,7 @@ public class Employee {
         this.phoneNumber = phoneNumber;
     }
 
+<<<<<<< HEAD
     public String getEmergencyContactNumber() {
         return emergencyContactNumber;
     }
@@ -102,6 +129,8 @@ public class Employee {
         this.emergencyContactNumber = emergencyContactNumber;
     }
 
+=======
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
     public String getGender() {
         return gender;
     }
@@ -179,7 +208,11 @@ public class Employee {
     }
 
     public void setPassword(String password) {
+<<<<<<< HEAD
         this.password = password != null ? password.trim() : null;
+=======
+        this.password = password;
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
     }
 
     public boolean isActive() {
@@ -195,7 +228,11 @@ public class Employee {
         return "Employee{" +
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
+<<<<<<< HEAD
 
+=======
+                ", lastName='" + lastName + '\'' +
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
                 ", email='" + email + '\'' +
                 ", role='" + role + '\'' +
                 '}';

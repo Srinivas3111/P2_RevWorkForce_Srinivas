@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
     <style>
+<<<<<<< HEAD
         .filter-toolbar {
             display: grid;
             grid-template-columns: 1.5fr 1fr 1fr auto;
@@ -58,12 +59,18 @@
             border-radius: 12px;
             background: #fff;
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+=======
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             color: var(--text-main);
+<<<<<<< HEAD
             table-layout: fixed;
         }
 
@@ -101,10 +108,13 @@
 
         col.col-actions {
             width: 13%;
+=======
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
         }
 
         th {
             text-align: left;
+<<<<<<< HEAD
             padding: 10px 10px;
             font-size: 12px;
             text-transform: uppercase;
@@ -130,12 +140,28 @@
 
         tr:hover td {
             background: rgba(31, 60, 136, 0.02);
+=======
+            padding: 16px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            border-bottom: 2px solid var(--border);
+            font-weight: 700;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
         }
 
         tr:last-child td {
             border-bottom: none;
         }
 
+<<<<<<< HEAD
         .employee-id {
             font-weight: 700;
             color: var(--primary);
@@ -248,23 +274,54 @@
             font-size: 12px;
             font-weight: 700;
             color: var(--text-muted);
+=======
+        tr:hover {
+            background: rgba(31, 60, 136, 0.02);
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #f0fff4;
+            color: #27ae60;
+        }
+
+        .status-inactive {
+            background: #fff5f5;
+            color: #c0392b;
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
         }
 
         .alert {
             padding: 16px;
             border-radius: 12px;
+<<<<<<< HEAD
             margin-bottom: 20px;
+=======
+            margin-bottom: 30px;
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
             font-weight: 500;
         }
 
         .alert-success {
             background: #f0fff4;
+<<<<<<< HEAD
             color: #15803d;
             border: 1px solid #bbf7d0;
+=======
+            color: #27ae60;
+            border: 1px solid #00ff0024;
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
         }
 
         .alert-error {
             background: #fff5f5;
+<<<<<<< HEAD
             color: #b91c1c;
             border: 1px solid #fecaca;
         }
@@ -287,12 +344,17 @@
             .action-group {
                 gap: 6px;
             }
+=======
+            color: #c0392b;
+            border: 1px solid #ff000024;
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
         }
     </style>
 </head>
 
 <body>
     <div class="dashboard-wrapper">
+<<<<<<< HEAD
         <aside class="sidebar" th:replace="~{fragments/admin_sidebar :: adminSidebar('employees')}"></aside>
 
         <main class="main-content">
@@ -310,13 +372,60 @@
                     </a>
                     <span th:text="${user != null ? user.name : 'Admin'}">Admin</span>
                     <div class="avatar" th:text="${user != null ? user.name.substring(0,1) : 'A'}">A</div>
+=======
+        <!-- Dashboard Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a th:href="@{/admin/dashboard}" class="sidebar-logo">REVATURE</a>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a th:href="@{/admin/dashboard}" class="menu-link">
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/admin/employees}" class="menu-link active">
+                        <span>Manage Employees</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/admin/add-employee}" class="menu-link">
+                        <span>Add Employee</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <span>Audit Logs</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <a th:href="@{/logout}" class="btn btn-logout" style="width: 100%; text-align: center;">Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <span>Admin</span>
+                    <div class="avatar">A</div>
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
                 </div>
             </header>
 
             <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-end;">
                 <div>
+<<<<<<< HEAD
                     <h1 class="page-title">Manage Employees</h1>
                     <p class="page-subtitle">All employee records loaded from Oracle <b>employees</b> table.</p>
+=======
+                    <h1 class="page-title">Employee Directory</h1>
+                    <p class="page-subtitle">A comprehensive list of all members in the organization.</p>
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
                 </div>
                 <a th:href="@{/admin/add-employee}" class="btn btn-primary">+ Register Employee</a>
             </div>
@@ -325,6 +434,7 @@
             <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
 
             <div class="card">
+<<<<<<< HEAD
                 <div class="filter-summary">
                     <span>Total rows: <span th:text="${totalEmployees}">0</span></span>
                     <span>Filtered rows: <span id="visibleRows" th:text="${totalEmployees}">0</span></span>
@@ -355,11 +465,16 @@
                             <col class="col-status">
                             <col class="col-actions">
                         </colgroup>
+=======
+                <div class="table-container">
+                    <table>
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
                         <thead>
                             <tr>
                                 <th>Emp ID</th>
                                 <th>Name</th>
                                 <th>Email</th>
+<<<<<<< HEAD
                                 <th class="th-center">Role</th>
                                 <th>Department</th>
                                 <th>Designation</th>
@@ -429,11 +544,40 @@
                                             <button type="submit" class="btn btn-success">Reactivate</button>
                                         </form>
                                     </div>
+=======
+                                <th>Role</th>
+                                <th>Department</th>
+                                <th>Designation</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="emp : ${employees}">
+                                <td th:text="${emp.id}" style="font-weight: 600; color: var(--primary);">1</td>
+                                <td th:text="${emp.firstName + ' ' + emp.lastName}">John Doe</td>
+                                <td th:text="${emp.email}">john@doe.com</td>
+                                <td>
+                                    <span th:text="${emp.role}" class="status-badge"
+                                        style="background: #e0e6ed; color: var(--text-muted);">ROLE</span>
+                                </td>
+                                <td th:text="${emp.department ?: 'N/A'}">N/A</td>
+                                <td th:text="${emp.designation ?: 'N/A'}">N/A</td>
+                                <td>
+                                    <span
+                                        th:class="${emp.active ? 'status-badge status-active' : 'status-badge status-inactive'}"
+                                        th:text="${emp.active ? 'Active' : 'Inactive'}">Active</span>
+                                </td>
+                                <td>
+                                    <a th:href="@{/admin/edit-employee/{id}(id=${emp.id})}" class="btn btn-primary"
+                                        style="padding: 5px 12px; font-size: 11px;">Edit</a>
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+<<<<<<< HEAD
                 <div id="noMatchMessage" class="no-match">No employees match the selected search/filter criteria.</div>
             </div>
         </main>
@@ -523,6 +667,11 @@
         setupDropdowns();
         applyFilters();
     </script>
+=======
+            </div>
+        </main>
+    </div>
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
 </body>
 
 </html>

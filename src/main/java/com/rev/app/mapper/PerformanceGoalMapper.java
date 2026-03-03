@@ -14,7 +14,11 @@ public class PerformanceGoalMapper {
         dto.setId(goal.getId());
         if (goal.getEmployee() != null) {
             dto.setEmployeeId(goal.getEmployee().getId());
+<<<<<<< HEAD
             dto.setEmployeeName(goal.getEmployee().getFirstName() + " " + goal.getEmployee());
+=======
+            dto.setEmployeeName(goal.getEmployee().getFirstName() + " " + goal.getEmployee().getLastName());
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
         }
         if (goal.getManager() != null) {
             dto.setManagerId(goal.getManager().getId());
@@ -27,7 +31,10 @@ public class PerformanceGoalMapper {
         dto.setCompletionPercentage(goal.getCompletionPercentage());
         dto.setProgressNote(goal.getProgressNote());
         dto.setManagerComment(goal.getManagerComment());
+<<<<<<< HEAD
         dto.setFinalRating(goal.getFinalRating());
+=======
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
         dto.setManagerCommentedOn(goal.getManagerCommentedOn());
         dto.setCreatedOn(goal.getCreatedOn());
         return dto;
@@ -46,7 +53,10 @@ public class PerformanceGoalMapper {
         goal.setCompletionPercentage(dto.getCompletionPercentage());
         goal.setProgressNote(dto.getProgressNote());
         goal.setManagerComment(dto.getManagerComment());
+<<<<<<< HEAD
         goal.setFinalRating(dto.getFinalRating());
+=======
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
         goal.setManagerCommentedOn(dto.getManagerCommentedOn());
         goal.setCreatedOn(dto.getCreatedOn());
         return goal;

@@ -12,6 +12,7 @@ import java.util.Optional;
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
+<<<<<<< HEAD
     // Native Oracle query to avoid any Hibernate dialect/case-sensitivity issues
     @Query(value = "SELECT * FROM employees WHERE UPPER(TRIM(email)) = UPPER(TRIM(:email)) AND ROWNUM = 1", nativeQuery = true)
     Optional<Employee> findByEmailIgnoreCase(@Param("email") String email);
@@ -36,4 +37,10 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     List<Employee> findByManager_IdOrderByIdAsc(Long managerId);
 
     Optional<Employee> findByIdAndManager_IdAndActiveTrue(Long id, Long managerId);
+=======
+    @org.springframework.data.jpa.repository.Query("SELECT MAX(e.id) FROM Employee e")
+    Long findMaxId();
+
+    List<Employee> findByRoleIgnoreCase(String role);
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
 }

@@ -15,7 +15,11 @@ public class EmployeeLeaveQuotaMapper {
         dto.setId(quota.getId());
         if (quota.getEmployee() != null) {
             dto.setEmployeeId(quota.getEmployee().getId());
+<<<<<<< HEAD
             dto.setEmployeeName(quota.getEmployee().getName());
+=======
+            dto.setEmployeeName(quota.getEmployee().getFirstName() + " " + quota.getEmployee().getLastName());
+>>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
         }
         if (quota.getLeaveType() != null) {
             dto.setLeaveTypeId(quota.getLeaveType().getId());
