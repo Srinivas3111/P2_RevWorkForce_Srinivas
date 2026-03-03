@@ -1,0 +1,7 @@
+2026-03-04 00:00:37.626 [http-nio-8080-exec-4] INFO  com.rev.app.config.ApplicationLoggingAspect - START NotificationControllerAdvice.addUnreadCount args=3
+2026-03-04 00:00:37.643 [http-nio-8080-exec-4] INFO  com.rev.app.config.ApplicationLoggingAspect - END NotificationControllerAdvice.addUnreadCount durationMs=17
+2026-03-04 00:00:37.644 [http-nio-8080-exec-4] INFO  com.rev.app.config.ApplicationLoggingAspect - START AuthController.showHomePage args=1
+2026-03-04 00:00:37.644 [http-nio-8080-exec-4] INFO  com.rev.app.config.ApplicationLoggingAspect - END AuthController.showHomePage durationMs=0
+2026-03-04 00:00:37.737 [http-nio-8080-exec-6] INFO  com.rev.app.config.ApplicationLoggingAspect - START GlobalExceptionHandler.handleGlobalException args=2
+2026-03-04 00:00:37.738 [http-nio-8080-exec-6] INFO  com.rev.app.config.ApplicationLoggingAspect - END GlobalExceptionHandler.handleGlobalException durationMs=1
+2026-03-04 00:00:37.738 [http-nio-8080-exec-6] WARN  org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver - Resolved [org.springframework.web.servlet.resource.NoResourceFoundException: No static resource favicon.ico.]

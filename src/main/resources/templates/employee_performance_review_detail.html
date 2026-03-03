@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Detail | Revature</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <style>
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(130px, 1fr));
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .meta-card {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+            padding: 10px 12px;
+        }
+
+        .meta-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+            font-weight: 700;
+        }
+
+        .meta-value {
+            font-weight: 700;
+            color: #1f2937;
+            font-size: 14px;
+        }
+
+        .pill {
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+
+        .status-draft {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-submitted {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .status-reviewed {
+            background: #ecfdf3;
+            color: #047857;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .content-block {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            color: var(--text-main);
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            font-size: 14px;
+        }
+
+        .alert-info {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1d4ed8;
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 992px) {
+            .meta-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a th:href="@{/employee/dashboard}" class="sidebar-logo">REVATURE</a>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a th:href="@{/employee/dashboard}" class="menu-link">
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/employee/profile}" class="menu-link">
+                        <span>My Profile</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/employee/leave/apply}" class="menu-link">
+                        <span>Leave Applications</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/employee/leave/balance}" class="menu-link">
+                        <span>Leave Balance</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/employee/holiday-calendar}" class="menu-link">
+                        <span>Holiday Calendar</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/employee/performance-reviews}" class="menu-link active">
+                        <span>Performance Reviews</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/employee/goals}" class="menu-link">
+                        <span>My Goals</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/employee/announcements}" class="menu-link">
+                        <span>Announcements</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/employee/directory}" class="menu-link">
+                        <span>Employee Directory</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <a th:href="@{/logout}" class="btn btn-logout" style="width: 100%; text-align: center;">Logout</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <a class="notif-bell-wrap" th:href="@{/notifications}" title="Notifications">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                        <span class="notif-badge" th:attr="data-count=${unreadCount}" th:text="${unreadCount > 0 ? unreadCount : ''}" th:if="${unreadCount != null and unreadCount > 0}"></span>
+                    </a>
+                    <span th:text="${user.name}">Employee Name</span>
+                    <div class="avatar" th:text="${user.name.substring(0,1)}">E</div>
+                </div>
+            </header>
+
+            <div class="page-header">
+                <h1 class="page-title">Performance Review Detail</h1>
+                <p class="page-subtitle">Review your submission and manager feedback status.</p>
+            </div>
+
+            <div class="card">
+                <div class="meta-grid">
+                    <div class="meta-card">
+                        <div class="meta-label">Review Period</div>
+                        <div class="meta-value" th:text="${review.reviewPeriod}">Q1 2026</div>
+                    </div>
+                    <div class="meta-card">
+                        <div class="meta-label">Submitted On</div>
+                        <div class="meta-value" th:text="${review.submittedOn != null ? #temporals.format(review.submittedOn, 'dd MMM yyyy') : 'N/A'}">01 Mar 2026</div>
+                    </div>
+                    <div class="meta-card">
+                        <div class="meta-label">Reviewed On</div>
+                        <div class="meta-value" th:text="${review.reviewedOn != null ? #temporals.format(review.reviewedOn, 'dd MMM yyyy') : 'N/A'}">10 Mar 2026</div>
+                    </div>
+                    <div class="meta-card">
+                        <div class="meta-label">Status</div>
+                        <div class="meta-value">
+                            <span class="pill"
+                                  th:classappend="${review.status == null ? ' status-draft' : ' status-' + #strings.toLowerCase(review.status.trim())}"
+                                  th:text="${review.status != null ? review.status : 'DRAFT'}">DRAFT</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="section-title">Key Deliverables</h2>
+                <div class="content-block"
+                     th:text="${review.achievements != null && !review.achievements.isBlank() ? review.achievements : 'N/A'}">N/A</div>
+
+                <h2 class="section-title">Accomplishments</h2>
+                <div class="content-block"
+                     th:text="${review.selfAssessment != null && !review.selfAssessment.isBlank() ? review.selfAssessment : 'N/A'}">N/A</div>
+
+                <h2 class="section-title">Areas of Improvement</h2>
+                <div class="content-block"
+                     th:text="${review.challenges != null && !review.challenges.isBlank() ? review.challenges : 'N/A'}">N/A</div>
+
+                <h2 class="section-title">Self Rating</h2>
+                <div class="content-block"
+                     th:text="${review.selfRating != null ? review.selfRating + ' / 5' : 'N/A'}">N/A</div>
+
+                <h2 class="section-title">Manager Feedback</h2>
+                <div th:if="${!feedbackVisible}" class="alert-info">
+                    Feedback will be visible after your manager submits review feedback.
+                </div>
+                <div th:if="${feedbackVisible}" class="content-block"
+                     th:text="${review.managerFeedback != null && !review.managerFeedback.isBlank() ? review.managerFeedback : 'No comments provided.'}">
+                    No comments provided.
+                </div>
+
+                <h2 class="section-title">Final Rating</h2>
+                <div th:if="${!feedbackVisible}" class="content-block">Not available yet.</div>
+                <div th:if="${feedbackVisible}" class="content-block"
+                     th:text="${review.managerRating != null ? review.managerRating + ' / 5' : 'Not rated'}">Not rated</div>
+
+                <div style="margin-top: 12px; display: flex; gap: 10px;">
+                    <a th:href="@{/employee/performance-reviews}" class="btn"
+                       style="border: 1px solid var(--border); color: var(--text-main);">Back</a>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

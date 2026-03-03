@@ -1,7 +1,10 @@
 package com.rev.app.controller;
 
+import com.rev.app.dto.EmployeeDTO;
 import com.rev.app.entity.Employee;
 import com.rev.app.service.AuthService;
+import com.rev.app.service.EmployeeService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,71 +17,92 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class AuthController {
 
     @Autowired
+    private EmployeeService employeeService;
+
+    @Autowired
     private AuthService authService;
 
     @GetMapping("/")
-    public String showLoginPage() {
+    public String showHomePage(HttpSession session) {
+        EmployeeDTO user = (EmployeeDTO) session.getAttribute("loggedInUser");
+        if (user != null) {
+            return redirectBasedOnRole(user);
+        }
+        return "home";
+    }
+
+    @GetMapping("/home")
+    public String showHomePageAlias(HttpSession session) {
+        return showHomePage(session);
+    }
+
+    @GetMapping("/login")
+    public String showLoginPage(HttpSession session) {
+        EmployeeDTO user = (EmployeeDTO) session.getAttribute("loggedInUser");
+        if (user != null) {
+            return redirectBasedOnRole(user);
+        }
         return "login";
+    }
+
+    @GetMapping("/signup")
+    public String showSignupPage() {
+        return "signup";
+    }
+
+    @PostMapping("/signup")
+    public String registerUser(@RequestParam String firstName,
+            @RequestParam String emailUser,
+            @RequestParam String password,
+            Model model) {
+        try {
+            // emailUser is the part before @, service appends domain
+            employeeService.registerEmployee(firstName, emailUser, password);
+            return "redirect:/login?registered";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "signup";
+        }
     }
 
     @PostMapping("/login")
     public String login(@RequestParam String email,
             @RequestParam String password,
             HttpSession session,
+            HttpServletRequest request,
             Model model) {
-        Employee employee = authService.authenticate(email, password);
-
-        if (employee != null) {
-            session.setAttribute("loggedInUser", employee);
-
-            // Role-based redirect
-            String role = employee.getRole().toUpperCase();
-            if ("ADMIN".equals(role)) {
-                return "redirect:/admin/dashboard";
-            } else if ("MANAGER".equals(role)) {
-                return "redirect:/manager/dashboard";
+        try {
+            EmployeeDTO employee = authService.authenticate(email, password);
+            if (employee != null) {
+                if (!employee.isActive()) {
+                    model.addAttribute("error", "Your account is deactivated. Please contact admin.");
+                    return "login";
+                }
+                session.setAttribute("loggedInUser", employee);
+                return redirectBasedOnRole(employee);
             } else {
-                return "redirect:/employee/dashboard";
+                model.addAttribute("error", "Invalid email or password");
+                return "login";
             }
-        } else {
-            model.addAttribute("error", "Invalid email or password");
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
             return "login";
         }
-    }
-
-    @GetMapping("/admin/dashboard")
-    public String adminDashboard(HttpSession session, Model model) {
-        Employee user = (Employee) session.getAttribute("loggedInUser");
-        if (user == null || !"ADMIN".equalsIgnoreCase(user.getRole())) {
-            return "redirect:/";
-        }
-        model.addAttribute("user", user);
-        return "admin_dashboard";
-    }
-
-    @GetMapping("/manager/dashboard")
-    public String managerDashboard(HttpSession session, Model model) {
-        Employee user = (Employee) session.getAttribute("loggedInUser");
-        if (user == null || !"MANAGER".equalsIgnoreCase(user.getRole())) {
-            return "redirect:/";
-        }
-        model.addAttribute("user", user);
-        return "manager_dashboard";
-    }
-
-    @GetMapping("/employee/dashboard")
-    public String employeeDashboard(HttpSession session, Model model) {
-        Employee user = (Employee) session.getAttribute("loggedInUser");
-        if (user == null || !"EMPLOYEE".equalsIgnoreCase(user.getRole())) {
-            return "redirect:/";
-        }
-        model.addAttribute("user", user);
-        return "employee_dashboard";
     }
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "redirect:/";
+        return "redirect:/home?logout";
+    }
+
+    private String redirectBasedOnRole(EmployeeDTO employee) {
+        if ("ADMIN".equalsIgnoreCase(employee.getRole())) {
+            return "redirect:/admin/dashboard";
+        } else if ("MANAGER".equalsIgnoreCase(employee.getRole())) {
+            return "redirect:/manager/dashboard";
+        } else {
+            return "redirect:/employee/dashboard";
+        }
     }
 }

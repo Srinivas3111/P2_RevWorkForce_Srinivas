@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Leave Management | Manager Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <style>
+        /* Tabs Styling */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: -2px;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Shared / General Styles */
+        .summary-bar,
+        .chip-list,
+        .toolbar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .toolbar {
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .summary-chip,
+        .chip {
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 8px 12px;
+            background: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .summary-chip strong,
+        .chip strong {
+            color: var(--primary);
+        }
+
+        .table-container,
+        .calendar-wrap {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+            margin-bottom: 24px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: var(--text-main);
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 14px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            font-weight: 700;
+            background: #f8fafc;
+        }
+
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-container tr:hover td {
+            background: rgba(31, 60, 136, 0.02);
+        }
+
+        .empty-state,
+        .empty-day {
+            padding: 24px;
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            color: var(--text-muted);
+            text-align: center;
+            font-weight: 600;
+            background: #fff;
+            margin-bottom: 24px;
+        }
+
+        .alert {
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 14px;
+            font-weight: 600;
+        }
+
+        .alert-success {
+            background: #ecfdf3;
+            border: 1px solid #a7f3d0;
+            color: #047857;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+        }
+
+        .employee-name,
+        .emp-name {
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        /* Requests Specific Styles */
+        .reason,
+        .comment-view {
+            white-space: normal;
+            overflow-wrap: anywhere;
+            color: var(--text-muted);
+        }
+
+        .comment-view {
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        .pill {
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+
+        .status-approved {
+            background: #ecfdf3;
+            color: #047857;
+        }
+
+        .status-rejected {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        .comment-box {
+            width: 100%;
+            min-height: 64px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 12px;
+            color: var(--text-main);
+            resize: vertical;
+            margin-bottom: 8px;
+        }
+
+        .comment-box:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(58, 108, 244, 0.12);
+        }
+
+        .comment-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            display: inline-block;
+        }
+
+        .approve-form {
+            display: grid;
+            gap: 4px;
+            margin-bottom: 8px;
+            border-bottom: 1px dashed #e5e7eb;
+            padding-bottom: 8px;
+        }
+
+        .approve-form:last-child {
+            border-bottom: none;
+            padding-bottom: 0px;
+            margin-bottom: 0px;
+        }
+
+        .approve-form .btn {
+            width: fit-content;
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: #fff;
+            border: 1px solid #dc2626;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+            border-color: #b91c1c;
+        }
+
+        .action-done {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Balance Specific Styles */
+        .year-form {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .year-form input {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 10px;
+            width: 120px;
+            font-size: 13px;
+        }
+
+        .num {
+            font-weight: 700;
+        }
+
+        .remaining-good {
+            color: #047857;
+        }
+
+        .remaining-low {
+            color: #b91c1c;
+        }
+
+        /* Calendar Specific Styles */
+        .month-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .month-nav {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .calendar-table {
+            min-width: 980px;
+        }
+
+        .calendar-table td {
+            vertical-align: top;
+            border-right: 1px solid var(--border);
+            height: 120px;
+            width: 14.285%;
+        }
+
+        .calendar-table td:last-child {
+            border-right: none;
+        }
+
+        .day-num {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .current-month .day-num {
+            color: var(--text-main);
+        }
+
+        .out-month {
+            background: #f8fafc;
+        }
+
+        .empty-day {
+            padding: 0;
+            border: none;
+            text-align: left;
+            font-size: 11px;
+            margin-bottom: 0px;
+            background: transparent;
+        }
+
+        .leave-tag {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: #166534;
+            background: #ecfdf3;
+            border: 1px solid #bbf7d0;
+            border-radius: 6px;
+            padding: 4px 6px;
+            margin-bottom: 4px;
+            white-space: normal;
+            overflow-wrap: anywhere;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar" th:replace="~{manager_dashboard :: sidebar}"></aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <span th:text="${user.name}">Manager Name</span>
+                    <div class="avatar" th:text="${user.name.substring(0,1)}">M</div>
+                </div>
+            </header>
+
+            <div class="page-header">
+                <h1 class="page-title">Team Leave Management</h1>
+                <p class="page-subtitle">Review team leave requests, monitor balances, and view the team calendar.</p>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+            <!-- Custom Tabs Setup -->
+            <div class="tabs">
+                <button class="tab-btn" th:classappend="${activeTab == 'requests' || activeTab == null} ? 'active'"
+                    onclick="switchTab('requests')">Leave Requests</button>
+                <button class="tab-btn" th:classappend="${activeTab == 'balance'} ? 'active'"
+                    onclick="switchTab('balance')">Leave Balance</button>
+                <button class="tab-btn" th:classappend="${activeTab == 'calendar'} ? 'active'"
+                    onclick="switchTab('calendar')">Calendar View</button>
+            </div>
+
+            <!-- Tab 1: Leave Requests -->
+            <div id="tab-requests" class="tab-content"
+                th:classappend="${activeTab == 'requests' || activeTab == null} ? 'active'">
+                <div class="summary-bar">
+                    <span class="summary-chip">Total Requests: <strong th:text="${totalTeamRequests}">0</strong></span>
+                    <span class="summary-chip">Pending Action: <strong
+                            th:text="${pendingTeamRequests}">0</strong></span>
+                </div>
+
+                <div th:if="${#lists.isEmpty(teamLeaveApplications)}" class="empty-state">
+                    No leave applications found for your team members.
+                </div>
+
+                <div class="table-container" th:if="${!#lists.isEmpty(teamLeaveApplications)}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Leave Dates</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                                <th>Manager Comment</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="req : ${teamLeaveApplications}">
+                                <td class="employee-name" th:text="${req.employeeName}">John Doe</td>
+                                <td
+                                    th:text="${#temporals.format(req.startDate, 'dd MMM yyyy') + ' - ' + #temporals.format(req.endDate, 'dd MMM yyyy')}">
+                                    01 Mar 2026 - 03 Mar 2026</td>
+                                <td class="reason"
+                                    th:text="${req.reason != null && !req.reason.isEmpty() ? req.reason : 'N/A'}">Reason
+                                </td>
+                                <td>
+                                    <span class="pill"
+                                        th:classappend="${#strings.equalsIgnoreCase(req.status, 'PENDING') ? ' status-pending' : (#strings.equalsIgnoreCase(req.status, 'APPROVED') ? ' status-approved' : ' status-rejected')}"
+                                        th:text="${req.status}">PENDING</span>
+                                </td>
+                                <td>
+                                    <span
+                                        th:text="${req.managerComment != null && !req.managerComment.isEmpty() ? req.managerComment : 'N/A'}"
+                                        class="comment-view">N/A</span>
+                                </td>
+                                <td>
+                                    <div th:if="${#strings.equalsIgnoreCase(req.status, 'PENDING')}">
+                                        <form th:action="@{/manager/team-requests/{id}/approve(id=${req.id})}"
+                                            method="post" class="approve-form"
+                                            onsubmit="return confirm('Approve this leave request?');">
+                                            <label class="comment-label"
+                                                th:for="${'managerCommentApprove-' + req.id}">Optional remark</label>
+                                            <input type="text" class="comment-box"
+                                                th:id="${'managerCommentApprove-' + req.id}" name="managerComment"
+                                                maxlength="500"
+                                                style="min-height: 28px; padding: 6px 10px; margin-bottom:4px;"
+                                                placeholder="Approval reason">
+                                            <button type="submit" class="btn btn-primary">Approve</button>
+                                        </form>
+                                        <form th:action="@{/manager/team-requests/{id}/reject(id=${req.id})}"
+                                            method="post" class="approve-form"
+                                            onsubmit="return confirm('Reject this leave request?');">
+                                            <label class="comment-label" th:for="${'rejectComment-' + req.id}">Reason
+                                                (mandatory)</label>
+                                            <input type="text" class="comment-box" th:id="${'rejectComment-' + req.id}"
+                                                name="managerComment" maxlength="500" required
+                                                style="min-height: 28px; padding: 6px 10px; margin-bottom:4px;"
+                                                placeholder="Rejection reason">
+                                            <button type="submit" class="btn btn-danger">Reject</button>
+                                        </form>
+                                    </div>
+                                    <span th:if="${!#strings.equalsIgnoreCase(req.status, 'PENDING')}"
+                                        class="action-done">No Action</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab 2: Leave Balance -->
+            <div id="tab-balance" class="tab-content" th:classappend="${activeTab == 'balance'} ? 'active'">
+                <div class="toolbar">
+                    <div class="chip-list" style="margin-bottom:0px;">
+                        <span class="chip">Total Allowed: <strong th:text="${totalAllowedLeaves}">0</strong></span>
+                        <span class="chip">Total Used: <strong th:text="${totalUsedLeaves}">0</strong></span>
+                        <span class="chip">Total Remaining: <strong th:text="${totalRemainingLeaves}">0</strong></span>
+                    </div>
+                    <form class="year-form" method="get" th:action="@{/manager/team-leave}">
+                        <input type="hidden" name="tab" value="balance">
+                        <label for="balanceYear" style="font-size:13px;font-weight:600;">Year view:</label>
+                        <input type="number" id="balanceYear" name="year" min="2000" max="2100"
+                            th:value="${selectedYear}" required>
+                        <button type="submit" class="btn btn-primary">Load</button>
+                    </form>
+                </div>
+
+                <div th:if="${#lists.isEmpty(teamLeaveBalances)}" class="empty-state">
+                    No team leave balance records available for the selected year.
+                </div>
+
+                <div class="table-container" th:if="${!#lists.isEmpty(teamLeaveBalances)}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Total</th>
+                                <th>Used</th>
+                                <th>Remaining</th>
+                            </tr>
+                        </thead>
+                        <tbody th:each="row, stat : ${teamLeaveBalances}">
+                            <tr class="emp-row" th:onclick="'toggleDetails(' + ${stat.index} + ')'"
+                                style="cursor: pointer; background-color: #f8fafc;">
+                                <td class="emp-name">
+                                    <span style="display:inline-block; width: 14px; text-align: center;">▶</span>
+                                    <strong th:text="${row.employeeName}">John Doe</strong>
+                                </td>
+                                <td class="num" th:text="${row.totalAllowedLeaves}">0</td>
+                                <td class="num" th:text="${row.usedLeaves}">0</td>
+                                <td class="num"
+                                    th:classappend="${row.remainingLeaves >= 0 ? ' remaining-good' : ' remaining-low'}"
+                                    th:text="${row.remainingLeaves}">0</td>
+                            </tr>
+                            <tr th:id="'details-' + ${stat.index}" class="details-row"
+                                style="display: none; background-color: #fff;">
+                                <td colspan="4" style="padding: 0;">
+                                    <table
+                                        style="width: 100%; margin: 0; background: #fafafa; border-top: 1px solid var(--border);">
+                                        <thead>
+                                            <tr>
+                                                <th
+                                                    style="background: #fafafa; border-bottom: 0px; padding-left: 32px;">
+                                                    Leave Type</th>
+                                                <th style="background: #fafafa; border-bottom: 0px;">Allowed</th>
+                                                <th style="background: #fafafa; border-bottom: 0px;">Used</th>
+                                                <th style="background: #fafafa; border-bottom: 0px;">Remaining</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="detail : ${row.details}">
+                                                <td style="padding-left: 32px;" th:text="${detail.leaveTypeName}">Casual
+                                                    Leave</td>
+                                                <td class="num" th:text="${detail.quotaDays}">0</td>
+                                                <td class="num" th:text="${detail.usedDays}">0</td>
+                                                <td class="num"
+                                                    th:classappend="${detail.balanceDays >= 0 ? ' remaining-good' : ' remaining-low'}"
+                                                    th:text="${detail.balanceDays}">0</td>
+                                            </tr>
+                                            <tr th:if="${#lists.isEmpty(row.details)}">
+                                                <td colspan="4" style="padding-left: 32px; color: var(--text-muted);">No
+                                                    assigned quota for any leave type.</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab 3: Calendar View -->
+            <div id="tab-calendar" class="tab-content" th:classappend="${activeTab == 'calendar'} ? 'active'">
+                <div class="toolbar">
+                    <div class="month-title"
+                        th:text="${#strings.capitalize(#strings.toLowerCase(selectedMonthName)) + ' ' + selectedYearCal}">
+                        March 2026
+                    </div>
+                    <div class="month-nav">
+                        <a class="btn" style="border: 1px solid var(--border);"
+                            th:href="@{/manager/team-leave(tab='calendar', year=${prevYear}, month=${prevMonth})}">Previous</a>
+                        <a class="btn btn-primary" th:href="@{/manager/team-leave(tab='calendar')}">Current Month</a>
+                        <a class="btn" style="border: 1px solid var(--border);"
+                            th:href="@{/manager/team-leave(tab='calendar', year=${nextYear}, month=${nextMonth})}">Next</a>
+                    </div>
+                </div>
+
+                <div class="chip-list">
+                    <span class="chip">Days With Leave: <strong th:text="${daysWithLeaves}">0</strong></span>
+                    <span class="chip">Employees On Leave: <strong th:text="${employeesOnLeaveCount}">0</strong></span>
+                    <span class="chip">Approved Applications: <strong
+                            th:text="${totalApprovedApplications}">0</strong></span>
+                </div>
+
+                <div class="calendar-wrap">
+                    <table class="calendar-table">
+                        <thead>
+                            <tr>
+                                <th>Monday</th>
+                                <th>Tuesday</th>
+                                <th>Wednesday</th>
+                                <th>Thursday</th>
+                                <th>Friday</th>
+                                <th>Saturday</th>
+                                <th>Sunday</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="week : ${calendarWeeks}">
+                                <td th:each="day : ${week}"
+                                    th:classappend="${day.currentMonth ? ' current-month' : ' out-month'}">
+                                    <div class="day-num" th:text="${day.dayNumber}">1</div>
+                                    <div th:if="${#lists.isEmpty(day.employeeNames)}" class="empty-day">No leave</div>
+                                    <span th:each="name : ${day.employeeNames}" class="leave-tag"
+                                        th:text="${name}">Employee</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 style="font-size:18px; margin: 8px 0 12px; color: var(--primary);">Date-wise Team Leave Table</h3>
+
+                <div th:if="${#lists.isEmpty(teamLeaveCalendarRows)}" class="empty-state">
+                    No approved team leave records found for this month.
+                </div>
+
+                <div class="table-container" th:if="${!#lists.isEmpty(teamLeaveCalendarRows)}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Employees on Leave</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="row : ${teamLeaveCalendarRows}">
+                                <td th:text="${#temporals.format(row.date, 'dd MMM yyyy')}">03 Mar 2026</td>
+                                <td th:text="${row.employeesOnLeave}">Jane Doe, John Smith</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Script to Handle Tabs -->
+    <script>
+        function switchTab(tabId) {
+            // Update URL parameter without reloading
+            const url = new URL(window.location);
+            url.searchParams.set('tab', tabId);
+            window.history.pushState({}, '', url);
+
+            // Hide all contents and remove active class from all buttons
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            // Show selected content and highlight selected button
+            document.getElementById('tab-' + tabId).classList.add('active');
+
+            // Find and set the active tab button
+            const buttons = document.querySelectorAll('.tab-btn');
+            for (let btn of buttons) {
+                if (btn.getAttribute('onclick') === `switchTab('${tabId}')`) {
+                    btn.classList.add('active');
+                    break;
+                }
+            }
+        }
+
+        function toggleDetails(index) {
+            const detailsRow = document.getElementById('details-' + index);
+            const iconSpan = detailsRow.previousElementSibling.querySelector('.emp-name span');
+            if (detailsRow.style.display === 'none' || detailsRow.style.display === '') {
+                detailsRow.style.display = 'table-row';
+                iconSpan.innerText = '▼';
+            } else {
+                detailsRow.style.display = 'none';
+                iconSpan.innerText = '▶';
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Personal Goals | Revature Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <style>
+        .goals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .goal-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+            transition: transform 0.2s ease;
+        }
+
+        .goal-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .priority-badge {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .priority-HIGH {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .priority-MEDIUM {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .priority-LOW {
+            background: #ecfdf3;
+            color: #047857;
+        }
+
+        .goal-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+
+        .goal-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .progress-container {
+            margin-top: auto;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #f1f5f9;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-light);
+            transition: width 0.4s ease;
+        }
+
+        .goal-footer {
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-badge {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-main);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .btn-update {
+            padding: 6px 12px;
+            font-size: 12px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar" th:replace="~{manager_dashboard :: sidebar}"></aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <a class="notif-bell-wrap" th:href="@{/notifications}" title="Notifications">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                        </svg>
+                        <span class="notif-badge" th:if="${unreadCount != null and unreadCount > 0}"
+                            th:text="${unreadCount}"></span>
+                    </a>
+                    <span th:text="${user.name}">Manager Name</span>
+                    <div class="avatar" th:text="${user.name.substring(0,1)}">M</div>
+                </div>
+            </header>
+
+            <div class="page-header">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h1 class="page-title">My Personal Goals</h1>
+                        <p class="page-subtitle">Track and manage your professional development objectives.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openAddModal()">+ Add New Goal</button>
+                </div>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+            <div th:if="${#lists.isEmpty(goals)}" class="card" style="text-align: center; padding: 60px;">
+                <p style="color: var(--text-muted); font-weight: 500;">No personal goals created for this year yet.</p>
+                <button class="btn btn-primary" style="margin-top: 16px;" onclick="openAddModal()">Create Your First
+                    Goal</button>
+            </div>
+
+            <div class="goals-grid" th:if="${!#lists.isEmpty(goals)}">
+                <div class="goal-card" th:each="goal : ${goals}">
+                    <div class="goal-header">
+                        <span class="priority-badge" th:classappend="'priority-' + ${goal.goalPriority}"
+                            th:text="${goal.goalPriority}">HIGH</span>
+                        <div class="action-group">
+                            <button class="btn-update"
+                                th:onclick="'openUpdateModal(' + ${goal.id} + ', ' + ${goal.completionPercentage} + ', \'' + ${goal.goalStatus} + '\')'">Update</button>
+                        </div>
+                    </div>
+                    <h3 class="goal-title" th:text="${goal.goalDescription}">Goal description goes here...</h3>
+                    <div class="goal-meta">
+                        <span>📅 Due: <strong th:text="${#temporals.format(goal.targetDate, 'dd MMM yyyy')}">15 Dec
+                                2026</strong></span>
+                    </div>
+
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Completion Progress</span>
+                            <span th:text="${goal.completionPercentage + '%'}">45%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" th:style="'width: ' + ${goal.completionPercentage} + '%'"></div>
+                        </div>
+                    </div>
+
+                    <div class="goal-footer">
+                        <span class="status-badge" th:text="${goal.goalStatus.replace('_', ' ')}">IN PROGRESS</span>
+                        <span th:if="${goal.managerComment != null}" title="View Admin Feedback"
+                            style="cursor: help; color: var(--primary);">💬 Feedback Available</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Goal Modal -->
+    <div class="modal-overlay" id="addModal">
+        <div class="modal">
+            <h2 style="margin-bottom: 20px;">Add Personal Goal</h2>
+            <form th:action="@{/manager/my-goals}" method="post">
+                <div class="form-group">
+                    <label>Goal Description</label>
+                    <textarea class="form-control" name="goalDescription" rows="4" required
+                        placeholder="What do you want to achieve?"></textarea>
+                </div>
+                <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label>Target Date</label>
+                        <input type="date" class="form-control" name="deadline" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select class="form-control" name="priority">
+                            <option value="LOW">Low</option>
+                            <option value="MEDIUM" selected>Medium</option>
+                            <option value="HIGH">High</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+                    <button type="button" class="btn btn-logout" onclick="closeModal('addModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Goal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Update Progress Modal -->
+    <div class="modal-overlay" id="updateModal">
+        <div class="modal">
+            <h2 style="margin-bottom: 20px;">Update Progress</h2>
+            <form id="updateForm" method="post">
+                <div class="form-group">
+                    <label>Completion Percentage</label>
+                    <input type="number" class="form-control" name="completionPercentage" id="progressPct" min="0"
+                        max="100" required>
+                </div>
+                <div class="form-group">
+                    <label>Goal Status</label>
+                    <select class="form-control" name="goalStatus" id="progressStatus">
+                        <option value="NOT_STARTED">Not Started</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="COMPLETED">Completed</option>
+                    </select>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+                    <button type="button" class="btn btn-logout" onclick="closeModal('updateModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Progress</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openAddModal() {
+            document.getElementById('addModal').style.display = 'flex';
+        }
+
+        function openUpdateModal(id, pct, status) {
+            document.getElementById('updateForm').action = '/manager/my-goals/' + id + '/update-progress';
+            document.getElementById('progressPct').value = pct;
+            document.getElementById('progressStatus').value = status;
+            document.getElementById('updateModal').style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>

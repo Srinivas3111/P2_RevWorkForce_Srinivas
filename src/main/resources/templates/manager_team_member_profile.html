@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Member Profile | Revature</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <style>
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(220px, 1fr));
+            gap: 10px;
+        }
+
+        .profile-item {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+            padding: 10px 12px;
+        }
+
+        .profile-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .profile-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1f2937;
+            overflow-wrap: anywhere;
+        }
+
+        .profile-value.muted {
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .identity-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+
+        .identity-name {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .identity-sub {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .pill {
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: #ecfdf3;
+            color: #047857;
+        }
+
+        @media (max-width: 860px) {
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar" th:replace="~{manager_dashboard :: sidebar}"></aside>
+
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <a class="notif-bell-wrap" th:href="@{/notifications}" title="Notifications">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                        </svg>
+                        <span class="notif-badge" th:attr="data-count=${unreadCount}"
+                            th:text="${unreadCount > 0 ? unreadCount : ''}"
+                            th:if="${unreadCount != null and unreadCount > 0}"></span>
+                    </a>
+                    <span th:text="${user.name}">Manager Name</span>
+                    <div class="avatar" th:text="${user.name.substring(0,1)}">M</div>
+                </div>
+            </header>
+
+            <div class="page-header">
+                <h1 class="page-title">Team Member Profile</h1>
+                <p class="page-subtitle">
+                    <a th:href="@{/manager/team-structure}" style="color: var(--primary); text-decoration: none;">Team
+                        Structure</a>
+                    / Employee Profile
+                </p>
+            </div>
+
+            <div class="identity-card">
+                <div class="identity-name" th:text="${teamMember.firstName}">John Doe</div>
+                <p class="identity-sub">
+                    Employee ID: <strong th:text="${teamMember.id}">0</strong>
+                    |
+                    Role: <strong th:text="${teamMember.role != null ? teamMember.role : 'EMPLOYEE'}">EMPLOYEE</strong>
+                    |
+                    <span class="pill status-active">Active</span>
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="page-title" style="font-size: 20px;">Employee Information</h2>
+                    <a th:href="@{/manager/team-structure}" class="btn btn-primary">Back To Team Structure</a>
+                </div>
+
+                <div class="profile-grid">
+                    <div class="profile-item">
+                        <div class="profile-label">Email</div>
+                        <div class="profile-value"
+                            th:text="${teamMember.email != null && !teamMember.email.isEmpty() ? teamMember.email : 'N/A'}">
+                            john@revworkforce.com</div>
+                    </div>
+                    <div class="profile-item">
+                        <div class="profile-label">Phone Number</div>
+                        <div class="profile-value"
+                            th:text="${teamMember.phoneNumber != null && !teamMember.phoneNumber.isEmpty() ? teamMember.phoneNumber : 'N/A'}">
+                            9999999999</div>
+                    </div>
+                    <div class="profile-item">
+                        <div class="profile-label">Department</div>
+                        <div class="profile-value"
+                            th:text="${teamMember.department != null && !teamMember.department.isEmpty() ? teamMember.department : 'N/A'}">
+                            IT</div>
+                    </div>
+                    <div class="profile-item">
+                        <div class="profile-label">Designation</div>
+                        <div class="profile-value"
+                            th:text="${teamMember.designation != null && !teamMember.designation.isEmpty() ? teamMember.designation : 'N/A'}">
+                            Developer</div>
+                    </div>
+                    <div class="profile-item">
+                        <div class="profile-label">Gender</div>
+                        <div class="profile-value"
+                            th:text="${teamMember.gender != null && !teamMember.gender.isEmpty() ? teamMember.gender : 'N/A'}">
+                            N/A</div>
+                    </div>
+                    <div class="profile-item">
+                        <div class="profile-label">Date Of Birth</div>
+                        <div class="profile-value"
+                            th:text="${teamMember.dateOfBirth != null ? #temporals.format(teamMember.dateOfBirth, 'dd MMM yyyy') : 'N/A'}">
+                            N/A</div>
+                    </div>
+                    <div class="profile-item">
+                        <div class="profile-label">Joining Date</div>
+                        <div class="profile-value"
+                            th:text="${teamMember.joiningDate != null ? #temporals.format(teamMember.joiningDate, 'dd MMM yyyy') : 'N/A'}">
+                            N/A</div>
+                    </div>
+                    <div class="profile-item">
+                        <div class="profile-label">Salary</div>
+                        <div class="profile-value" th:text="${teamMember.salary != null ? teamMember.salary : 'N/A'}">
+                            N/A</div>
+                    </div>
+                    <div class="profile-item" style="grid-column: 1 / -1;">
+                        <div class="profile-label">Address</div>
+                        <div class="profile-value muted"
+                            th:text="${teamMember.address != null && !teamMember.address.isEmpty() ? teamMember.address : 'N/A'}">
+                            N/A</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

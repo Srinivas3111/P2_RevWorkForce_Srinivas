@@ -7,92 +7,495 @@
     <title>Manager Dashboard | Revature</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <style>
+        .announcement-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .announcement-item {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            background: #fff;
+        }
+
+        .announcement-item-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .announcement-item-title {
+            font-weight: 700;
+            color: #1f2937;
+            font-size: 14px;
+        }
+
+        .announcement-item-time {
+            color: var(--text-muted);
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .announcement-item-message {
+            color: var(--text-main);
+            font-size: 13px;
+            white-space: pre-wrap;
+        }
+
+        .notification-meta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .notification-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            border: 1px solid transparent;
+        }
+
+        .notification-status.unread {
+            color: #1d4ed8;
+            background: #dbeafe;
+            border-color: #bfdbfe;
+        }
+
+        .notification-status.read {
+            color: #475569;
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .announcement-empty {
+            padding: 12px;
+            border: 1px dashed var(--border);
+            border-radius: 10px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .notif-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .notif-badge {
+            background: #dc2626;
+            color: #fff;
+            border-radius: 999px;
+            min-width: 22px;
+            height: 22px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            padding: 0 6px;
+        }
+
+        .goal-progress-summary {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .goal-chip {
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 8px 12px;
+            background: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .goal-chip strong {
+            color: var(--primary);
+        }
+
+        .goal-progress-table-wrap {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        .goal-progress-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 860px;
+        }
+
+        .goal-progress-table th {
+            text-align: left;
+            padding: 12px 14px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            font-weight: 700;
+            background: #f8fafc;
+        }
+
+        .goal-progress-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+            vertical-align: middle;
+            color: var(--text-main);
+        }
+
+        .goal-progress-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .goal-progress-table tr:hover td {
+            background: rgba(31, 60, 136, 0.02);
+        }
+
+        .goal-emp-name {
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .goal-title-cell {
+            font-weight: 700;
+            color: #1f2937;
+            max-width: 280px;
+            white-space: normal;
+            overflow-wrap: anywhere;
+        }
+
+        .progress-stack {
+            display: grid;
+            gap: 6px;
+            min-width: 180px;
+        }
+
+        .progress-track {
+            height: 8px;
+            border-radius: 999px;
+            background: #e5e7eb;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%);
+            border-radius: 999px;
+        }
+
+        .progress-value {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .status-pill {
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+
+        .status-not-started {
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .status-in-progress {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+
+        .status-completed {
+            background: #ecfdf3;
+            color: #047857;
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Top Navigation Bar -->
-    <nav class="navbar">
-        <a href="#" class="nav-brand">
-            <span>REVATURE</span>
-        </a>
-
-        <ul class="nav-links">
-            <li><a href="#" class="active">Team Dashboard</a></li>
-            <li><a href="#">Performance</a></li>
-            <li><a href="#">Leave Approvals</a></li>
-            <li><a href="#">Project Timelines</a></li>
-            <li><a href="#">Reports</a></li>
-        </ul>
-
-        <div class="user-actions">
-            <div class="user-profile">
-                <div class="user-avatar" style="background: #5bc0de;"
-                    th:text="${user?.name != null ? user.name.substring(0,1) : 'M'}">M</div>
-                <span th:text="${user?.name != null ? user.name : 'Manager'}">Manager</span>
+    <div class="dashboard-wrapper">
+        <!-- Dashboard Sidebar -->
+        <aside class="sidebar" th:fragment="sidebar">
+            <div class="sidebar-header">
+                <a th:href="@{/manager/dashboard}" class="sidebar-logo">REVATURE</a>
             </div>
-            <a th:href="@{/logout}" class="logout-btn">Sign Out</a>
-        </div>
 
-        <button class="mobile-toggle">☰</button>
-    </nav>
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a th:href="@{/manager/dashboard}" class="menu-link"
+                        th:classappend="${currentUri == '/manager/dashboard'} ? ' active'">
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/manager/profile}" class="menu-link"
+                        th:classappend="${currentUri == '/manager/profile'} ? ' active'">
+                        <span>My Profile</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/manager/my-team}" class="menu-link"
+                        th:classappend="${currentUri == '/manager/my-team'} ? ' active'">
+                        <span>Team Overview</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/employee/leave/apply}" class="menu-link"
+                        th:classappend="${currentUri == '/employee/leave/apply'} ? ' active'">
+                        <span>Leave Applications</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/manager/team-leave}" class="menu-link"
+                        th:classappend="${currentUri == '/manager/team-leave'} ? ' active'">
+                        <span>Team Leave Management</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/employee/leave/balance}" class="menu-link"
+                        th:classappend="${currentUri == '/employee/leave/balance'} ? ' active'">
+                        <span>My Leave Balance</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/employee/holiday-calendar}" class="menu-link"
+                        th:classappend="${currentUri == '/employee/holiday-calendar'} ? ' active'">
+                        <span>Holiday Calendar</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/manager/performance-reviews}" class="menu-link"
+                        th:classappend="${currentUri == '/manager/performance-reviews'} ? ' active'">
+                        <span>Performance Reviews</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/manager/goals}" class="menu-link"
+                        th:classappend="${currentUri == '/manager/goals'} ? ' active'">
+                        <span>Goals</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/employee/announcements}" class="menu-link"
+                        th:classappend="${currentUri == '/employee/announcements'} ? ' active'">
+                        <span>Announcements</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/manager/directory}" class="menu-link"
+                        th:classappend="${currentUri == '/manager/directory'} ? ' active'">
+                        <span>Employee Directory</span>
+                    </a>
+                </li>
+            </ul>
 
-    <div class="container">
-        <header class="page-header">
-            <h1 class="page-title">Manager Portal</h1>
-            <p class="page-subtitle">Welcome back, <span th:text="${user?.name ?: 'Manager'}">Manager</span> (ID: <span
-                    th:text="${user?.employeeId ?: 'N/A'}">MGR001</span>). Here is your team's status.</p>
-        </header>
+            <div class="sidebar-footer">
+                <a th:href="@{/logout}" class="btn btn-logout">Logout</a>
+            </div>
+        </aside>
 
-        <main>
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <a class="notif-bell-wrap" th:href="@{/notifications}" title="Notifications">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                        </svg>
+                        <span class="notif-badge" th:attr="data-count=${unreadCount}"
+                            th:text="${unreadCount > 0 ? unreadCount : ''}"
+                            th:if="${unreadCount != null and unreadCount > 0}"></span>
+                    </a>
+                    <span th:text="${user.name}">Manager Name</span>
+                    <div class="avatar" th:text="${user.name.substring(0,1)}">M</div>
+                </div>
+            </header>
+
+            <div class="page-header">
+                <h1 class="page-title">Manager Dashboard</h1>
+                <p class="page-subtitle">Welcome back, <span th:text="${user.name}">Manager</span>. Overseeing team
+                    productivity.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-value" th:text="${teamSize}">0</div>
+                    <div class="stat-label">Team Members</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📝</div>
+                    <div class="stat-value" th:text="${pendingTeamRequests}">0</div>
+                    <div class="stat-label">Pending Approvals</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-value" th:text="${goalsPendingComment}">0</div>
+                    <div class="stat-label">Goals Pending Comment</div>
+                </div>
+            </div>
+
             <div class="card">
-                <div class="card-title">
-                    <h2>Team Overview</h2>
-                    <span class="badge badge-manager" th:text="${user?.role ?: 'MANAGER'}">MANAGER</span>
+                <div class="card-header">
+                    <h2 class="page-title" style="font-size: 20px;">Team Overview</h2>
+                    <a th:href="@{/manager/team-structure}" class="btn btn-primary">Team Structure</a>
                 </div>
-
-                <p style="color: var(--text-muted);">
-                    Your team has <strong style="color: var(--white);">12 members</strong>. 2 members are currently on
-                    leave.
-                    Project deadlines are on track for this sprint.
+                <p class="page-subtitle">
+                    Current team efficiency is <strong style="color: var(--primary);">92%</strong>. All project
+                    deadlines are currently on track.
                 </p>
-
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-value">8</div>
-                        <div class="stat-label">Tasks Open</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">92%</div>
-                        <div class="stat-label">Efficiency</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">3</div>
-                        <div class="stat-label">Pending Approvals</div>
-                    </div>
+                <div style="margin-top: 20px; display: flex; gap: 10px;">
+                    <a th:href="@{/manager/team-requests}" class="btn btn-primary">View Team Requests</a>
+                    <a th:href="@{/manager/team-leave-balance}" class="btn"
+                        style="border: 1px solid var(--border); color: var(--text-main);">View Leave Balance</a>
+                    <a th:href="@{/manager/performance-reviews}" class="btn"
+                        style="border: 1px solid var(--border); color: var(--text-main);">Performance Reviews</a>
+                    <a th:href="@{/manager/performance-goals}" class="btn"
+                        style="border: 1px solid var(--border); color: var(--text-main);">Performance Goals</a>
                 </div>
             </div>
 
-            <div class="card" style="margin-top: 30px;">
-                <div class="card-title">
-                    <h2>Manager Actions</h2>
+            <div class="card" style="margin-top: 16px;">
+                <div class="card-header">
+                    <h2 class="page-title" style="font-size: 20px;">Team Goal Progress</h2>
+                    <a th:href="@{/manager/performance-goals}" class="btn btn-primary">Open Goal Reviews</a>
                 </div>
-                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                    <button
-                        style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">Approve
-                        Leaves</button>
-                    <button
-                        style="background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border); padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">Review
-                        Timesheets</button>
+
+                <div class="goal-progress-summary">
+                    <span class="goal-chip">Goals Tracked: <strong
+                            th:text="${#lists.size(teamGoalProgressRows)}">0</strong></span>
+                    <span class="goal-chip">Low Progress (&lt;40%): <strong
+                            th:text="${underperformingGoalCount}">0</strong></span>
+                    <span class="goal-chip">Overdue Goals: <strong th:text="${overdueGoalCount}">0</strong></span>
+                </div>
+
+                <div th:if="${#lists.isEmpty(teamGoalProgressRows)}" class="announcement-empty">
+                    No team goals available yet.
+                </div>
+
+                <div class="goal-progress-table-wrap" th:if="${!#lists.isEmpty(teamGoalProgressRows)}">
+                    <table class="goal-progress-table">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Goal</th>
+                                <th>Progress</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="g : ${teamGoalProgressRows}">
+                                <td class="goal-emp-name" th:text="${g.employeeName}">
+                                    John Doe</td>
+                                <td class="goal-title-cell" th:text="${g.goalTitle}">Complete cloud certification</td>
+                                <td>
+                                    <div class="progress-stack">
+                                        <div class="progress-track">
+                                            <div class="progress-fill"
+                                                th:style="${'width:' + (g.completionPercentage != null ? g.completionPercentage : 0) + '%'}">
+                                            </div>
+                                        </div>
+                                        <span class="progress-value"
+                                            th:text="${(g.completionPercentage != null ? g.completionPercentage : 0) + '%'}">0%</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="status-pill"
+                                        th:classappend="${g.goalStatus == null || #strings.equalsIgnoreCase(g.goalStatus, 'NOT_STARTED') || #strings.equalsIgnoreCase(g.goalStatus, 'OPEN') ? ' status-not-started' : (#strings.equalsIgnoreCase(g.goalStatus, 'IN_PROGRESS') ? ' status-in-progress' : ' status-completed')}"
+                                        th:text="${g.goalStatus != null ? #strings.capitalize(#strings.toLowerCase(g.goalStatus.replace('_', ' '))) : 'Not started'}">
+                                        Not started
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 16px;">
+                <div class="card-header" id="team-notifications">
+                    <h2 class="page-title" style="font-size: 20px;">My Notifications</h2>
+                    <a th:href="@{/notifications}" class="btn btn-primary">Open Notification Center</a>
+                </div>
+                <div class="announcement-list">
+                    <div th:if="${#lists.isEmpty(managerNotifications)}" class="announcement-empty">
+                        No notifications yet.
+                    </div>
+                    <article class="announcement-item" th:each="n : ${managerNotifications}">
+                        <div class="announcement-item-head">
+                            <h3 class="announcement-item-title" th:text="${n.title}">Notification title</h3>
+                            <div class="notification-meta">
+                                <span th:class="${n.read ? 'notification-status read' : 'notification-status unread'}"
+                                    th:text="${n.read ? 'Read' : 'Unread'}">Unread</span>
+                                <span class="announcement-item-time"
+                                    th:text="${n.createdOn != null ? #temporals.format(n.createdOn, 'dd MMM yyyy HH:mm') : 'N/A'}">
+                                    28 Feb 2026 21:00
+                                </span>
+                            </div>
+                        </div>
+                        <p class="announcement-item-message" th:text="${n.message}">Notification message.</p>
+                        <div style="display: flex; justify-content: flex-end; margin-top: 8px;" th:if="${!n.read}">
+                            <form th:action="@{/notifications/{id}/read(id=${n.id})}" method="post">
+                                <input type="hidden" name="redirect" value="/manager/dashboard">
+                                <button type="submit" class="btn"
+                                    style="border: 1px solid var(--border); color: var(--text-main);">Mark
+                                    Read</button>
+                            </form>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 16px;">
+                <div class="card-header">
+                    <h2 class="page-title" style="font-size: 20px;">Company Announcements</h2>
+                </div>
+                <div class="announcement-list">
+                    <div th:if="${#lists.isEmpty(announcements)}" class="announcement-empty">
+                        No active announcements.
+                    </div>
+                    <article class="announcement-item" th:each="a : ${announcements}">
+                        <div class="announcement-item-head">
+                            <h3 class="announcement-item-title" th:text="${a.title}">Announcement title</h3>
+                            <span class="announcement-item-time"
+                                th:text="${a.updatedOn != null ? #temporals.format(a.updatedOn, 'dd MMM yyyy HH:mm') : 'N/A'}">
+                                28 Feb 2026 21:00
+                            </span>
+                        </div>
+                        <p class="announcement-item-message" th:text="${a.message}">Announcement message.</p>
+                    </article>
                 </div>
             </div>
         </main>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('Manager Dashboard Loaded');
-        });
-    </script>
 </body>
 
 </html>

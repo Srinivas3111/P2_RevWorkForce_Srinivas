@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | RevWorkforce</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .signup-card {
+            background: white;
+            padding: 40px 35px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+            width: 100%;
+            max-width: 430px;
+        }
+
+        .signup-card h2 {
+            text-align: center;
+            color: #1e3c72;
+            margin-bottom: 6px;
+            font-size: 24px;
+        }
+
+        .signup-card p.subtitle {
+            text-align: center;
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 28px;
+        }
+
+        /* ---- Form Groups ---- */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 6px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #1e3c72;
+        }
+
+        /* ---- Email wrapper: input + suffix ---- */
+        .email-wrapper {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            overflow: hidden;
+            transition: border 0.2s;
+        }
+
+        .email-wrapper:focus-within {
+            border-color: #1e3c72;
+        }
+
+        .email-wrapper input {
+            border: none;
+            border-radius: 0;
+            flex: 1;
+            padding: 10px 12px;
+            font-size: 14px;
+        }
+
+        .email-wrapper input:focus {
+            outline: none;
+            box-shadow: none;
+            border: none;
+        }
+
+        .email-suffix {
+            background: #eef2f7;
+            color: #555;
+            font-size: 14px;
+            padding: 10px 12px;
+            white-space: nowrap;
+            border-left: 1px solid #ccc;
+            user-select: none;
+        }
+
+        /* ---- Error messages ---- */
+        .error-msg {
+            color: #d32f2f;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* ---- Buttons ---- */
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 26px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 11px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-submit {
+            background: #1e3c72;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background: #2a5298;
+        }
+
+        .btn-reset {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-reset:hover {
+            background: #bdbdbd;
+        }
+
+        /* ---- Login link ---- */
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .login-link a {
+            color: #1e3c72;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="signup-card">
+
+        <h2>Create Account</h2>
+        <p class="subtitle">Register with your RevWorkforce email</p>
+
+        <form id="signupForm" th:action="@{/signup}" method="post" novalidate>
+
+            <!-- Server-side error (from Spring model) -->
+            <div th:if="${error}"
+                style="background:#fff0f0;border:1px solid #f5c6cb;color:#c0392b;padding:10px 14px;border-radius:6px;font-size:13px;margin-bottom:16px;text-align:center;"
+                th:text="${error}"></div>
+
+            <!-- Full Name -->
+            <div class="form-group">
+                <label for="firstName">Full Name</label>
+                <input type="text" id="firstName" name="firstName" placeholder="Enter your full name">
+                <div class="error-msg" id="nameError">Full name is required.</div>
+            </div>
+
+            <!-- Email (username part only, suffix fixed) -->
+            <div class="form-group">
+                <label for="emailUser">Email Address</label>
+                <div class="email-wrapper">
+                    <input type="text" id="emailUser" name="emailUser" placeholder="yourname" autocomplete="off">
+                    <span class="email-suffix">@revworkforce.com</span>
+                </div>
+                <div class="error-msg" id="emailError">Enter a valid username before @revworkforce.com (no spaces or @).
+                </div>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Create a password (min 6 chars)">
+                <div class="error-msg" id="passwordError">Password must be at least 6 characters.</div>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Re-enter your password">
+                <div class="error-msg" id="confirmError">❌ Passwords do not match.</div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="btn-row">
+                <button type="submit" class="btn btn-submit">Submit</button>
+                <button type="button" class="btn btn-reset" onclick="resetForm()">Reset</button>
+            </div>
+
+        </form>
+
+        <!-- Back to Login -->
+        <div class="login-link">
+            Already have an account? <a href="/login">Login</a>
+        </div>
+
+    </div>
+
+    <script>
+        /* ---- Force email username to lowercase as user types ---- */
+        var emailInput = document.getElementById('emailUser');
+        emailInput.addEventListener('input', function () {
+            var pos = this.selectionStart;
+            this.value = this.value.toLowerCase();
+            this.setSelectionRange(pos, pos);
+        });
+
+        /* ---- Clear all error messages ---- */
+        function clearErrors() {
+            document.querySelectorAll('.error-msg').forEach(function (el) {
+                el.style.display = 'none';
+            });
+        }
+
+        /* ---- Reset form ---- */
+        function resetForm() {
+            document.getElementById('signupForm').reset();
+            clearErrors();
+        }
+
+        /* ---- Form submit: JS validates first, then submits to server ---- */
+        document.getElementById('signupForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            clearErrors();
+
+            var isValid = true;
+
+            var firstName = document.getElementById('firstName').value.trim();
+            var emailUser = document.getElementById('emailUser').value.trim().toLowerCase();
+            var password = document.getElementById('password').value;
+            var confirmPassword = document.getElementById('confirmPassword').value;
+
+            /* Validate name */
+            if (firstName === '') {
+                document.getElementById('nameError').style.display = 'block';
+                isValid = false;
+            }
+
+            /* Validate email username: no spaces, no @, not empty */
+            if (emailUser === '' || emailUser.indexOf('@') !== -1 || emailUser.indexOf(' ') !== -1) {
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            }
+
+            /* Validate password length */
+            if (password.length < 6) {
+                document.getElementById('passwordError').style.display = 'block';
+                isValid = false;
+            }
+
+            /* Validate password match */
+            if (password !== confirmPassword) {
+                document.getElementById('confirmError').style.display = 'block';
+                isValid = false;
+            }
+
+            /* All client checks passed — submit form to server */
+            if (isValid) {
+                this.submit();
+            }
+        });
+    </script>
+
+</body>
+
+</html>

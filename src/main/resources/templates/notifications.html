@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications | Revature</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <style>
+        .main-content {
+            margin-left: 0;
+            max-width: 100%;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .notification-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .notification-item {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            background: #fff;
+        }
+
+        .notification-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+
+        .notification-title {
+            font-weight: 700;
+            color: #1f2937;
+            font-size: 14px;
+        }
+
+        .notification-meta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .notification-time {
+            color: var(--text-muted);
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .notification-message {
+            color: var(--text-main);
+            font-size: 13px;
+            white-space: pre-wrap;
+        }
+
+        .empty-state {
+            padding: 18px;
+            border: 1px dashed var(--border);
+            border-radius: 10px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-align: center;
+            background: #fff;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            border: 1px solid transparent;
+        }
+
+        .status-pill.unread {
+            color: #1d4ed8;
+            background: #dbeafe;
+            border-color: #bfdbfe;
+        }
+
+        .status-pill.read {
+            color: #475569;
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .action-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 8px;
+        }
+
+        .btn-secondary {
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            background: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Notifications</h1>
+                <p class="page-subtitle">Track actions, employee updates, and workflow events by timestamp.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2 class="page-title" style="font-size: 20px;">My Notification Center</h2>
+                        <p class="page-subtitle">Unread: <strong th:text="${unreadNotificationCount}">0</strong></p>
+                    </div>
+                    <div class="header-actions">
+                        <a th:href="@{${dashboardPath}}" class="btn btn-secondary">Back to Dashboard</a>
+                        <form th:if="${unreadNotificationCount > 0}" th:action="@{/notifications/read-all}" method="post">
+                            <input type="hidden" name="redirect" value="/notifications">
+                            <button type="submit" class="btn btn-primary">Mark All Read</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="notification-list">
+                    <div th:if="${#lists.isEmpty(notifications)}" class="empty-state">
+                        No notifications available.
+                    </div>
+
+                    <article class="notification-item" th:each="n : ${notifications}">
+                        <div class="notification-head">
+                            <h3 class="notification-title" th:text="${n.title}">Action Title</h3>
+                            <div class="notification-meta">
+                                <span th:class="${n.read ? 'status-pill read' : 'status-pill unread'}"
+                                    th:text="${n.read ? 'Read' : 'Unread'}">Unread</span>
+                                <span class="notification-time"
+                                    th:text="${n.createdOn != null ? #temporals.format(n.createdOn, 'dd MMM yyyy HH:mm') : 'N/A'}">
+                                    03 Mar 2026 10:30
+                                </span>
+                            </div>
+                        </div>
+
+                        <p class="notification-message" th:text="${n.message}">
+                            Action: Sample | Employee: Sample User | Details...
+                        </p>
+
+                        <div class="action-row" th:if="${!n.read}">
+                            <form th:action="@{/notifications/{id}/read(id=${n.id})}" method="post">
+                                <input type="hidden" name="redirect" value="/notifications">
+                                <button type="submit" class="btn btn-secondary">Mark Read</button>
+                            </form>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>
