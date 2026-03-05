@@ -15,10 +15,6 @@ public class EmployeeMapper {
         EmployeeDTO dto = new EmployeeDTO();
         dto.setId(entity.getId());
         dto.setFirstName(entity.getFirstName());
-<<<<<<< HEAD
-=======
-        dto.setLastName(entity.getLastName());
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
         dto.setEmail(entity.getEmail());
         dto.setPhoneNumber(entity.getPhoneNumber());
         dto.setEmergencyContactNumber(entity.getEmergencyContactNumber());
@@ -35,11 +31,7 @@ public class EmployeeMapper {
 
         if (entity.getManager() != null) {
             dto.setManagerId(entity.getManager().getId());
-<<<<<<< HEAD
             dto.setManagerName(entity.getManager().getFirstName());
-=======
-            dto.setManagerName(entity.getManager().getFirstName() + " " + entity.getManager().getLastName());
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
         }
 
         return dto;
@@ -53,10 +45,6 @@ public class EmployeeMapper {
         Employee entity = new Employee();
         entity.setId(dto.getId());
         entity.setFirstName(dto.getFirstName());
-<<<<<<< HEAD
-=======
-        entity.setLastName(dto.getLastName());
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
         entity.setEmail(dto.getEmail());
         entity.setPhoneNumber(dto.getPhoneNumber());
         entity.setEmergencyContactNumber(dto.getEmergencyContactNumber());

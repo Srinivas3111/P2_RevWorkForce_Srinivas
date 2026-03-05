@@ -8,7 +8,8 @@ import java.time.LocalDate;
 @Table(name = "company_holidays", uniqueConstraints = {
         @UniqueConstraint(columnNames = "holiday_date")
 })
-public class CompanyHoliday {
+public class CompanyHoliday
+{
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "company_holiday_seq")

@@ -20,7 +20,6 @@ public class ThymeleafParseTest {
             Context context = new Context();
             context.setLocale(Locale.ENGLISH);
 
-            // just try to process the template
             String result = templateEngine.process("manager_goals", context);
             System.out.println("No parsing error");
         } catch (Exception e) {
@@ -29,7 +28,7 @@ public class ThymeleafParseTest {
             if (e.getCause() != null) {
                 System.err.println("CAUSE: " + e.getCause().getMessage());
             }
-            // Exception intentionally ignored to allow the build to succeed.
+
         }
     }
 }

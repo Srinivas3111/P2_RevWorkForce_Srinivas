@@ -27,20 +27,12 @@ public class PerformanceReviewMapper {
 
         if (entity.getEmployee() != null) {
             dto.setEmployeeId(entity.getEmployee().getId());
-<<<<<<< HEAD
             dto.setEmployeeName(entity.getEmployee().getName());
-=======
-            dto.setEmployeeName(entity.getEmployee().getFirstName() + " " + entity.getEmployee().getLastName());
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
         }
 
         if (entity.getManager() != null) {
             dto.setManagerId(entity.getManager().getId());
-<<<<<<< HEAD
             dto.setManagerName(entity.getManager().getName());
-=======
-            dto.setManagerName(entity.getManager().getFirstName() + " " + entity.getManager().getLastName());
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
         }
 
         return dto;

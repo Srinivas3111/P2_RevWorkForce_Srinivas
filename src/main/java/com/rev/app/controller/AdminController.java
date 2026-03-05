@@ -1,6 +1,5 @@
 package com.rev.app.controller;
 
-<<<<<<< HEAD
 import com.rev.app.dto.AnnouncementDTO;
 import com.rev.app.dto.DepartmentDTO;
 import com.rev.app.dto.DesignationDTO;
@@ -28,26 +27,17 @@ import com.rev.app.service.SystemActivityLogService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-=======
-import com.rev.app.entity.Employee;
-import com.rev.app.service.EmployeeService;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-<<<<<<< HEAD
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-=======
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
@@ -55,7 +45,6 @@ public class AdminController {
     @Autowired
     private EmployeeService employeeService;
 
-<<<<<<< HEAD
     @Autowired
     private LeaveManagementService leaveManagementService;
 
@@ -117,59 +106,6 @@ public class AdminController {
         model.addAttribute("managerCount", managerCount);
         model.addAttribute("announcements", announcementService.getActiveAnnouncements());
         return "admin_dashboard";
-=======
-    private boolean isAdmin(HttpSession session, Model model) {
-        Employee user = (Employee) session.getAttribute("loggedInUser");
-        if (user != null && "ADMIN".equalsIgnoreCase(user.getRole())) {
-            model.addAttribute("user", user);
-            return true;
-        }
-        return false;
-    }
-
-    @GetMapping("/add-employee")
-    public String showAddEmployeeForm(HttpSession session, Model model) {
-        if (!isAdmin(session, model))
-            return "redirect:/";
-
-        Employee newEmp = new Employee();
-        newEmp.setId(employeeService.generateUniqueEmployeeId());
-        model.addAttribute("employee", newEmp);
-        model.addAttribute("managers", employeeService.getManagers());
-        return "add_employee";
-    }
-
-    @PostMapping("/add-employee")
-    public String addEmployee(@ModelAttribute Employee employee,
-            HttpSession session,
-            Model model,
-            RedirectAttributes redirectAttributes) {
-        if (!isAdmin(session, model))
-            return "redirect:/";
-
-        try {
-            // Check for required fields manually or using @Valid if integrated
-            if (employee.getId() == null) {
-                throw new Exception("Employee ID is required");
-            }
-            if (employee.getFirstName() == null || employee.getFirstName().isEmpty()) {
-                throw new Exception("First name is required");
-            }
-            if (employee.getLastName() == null || employee.getLastName().isEmpty()) {
-                throw new Exception("Last name is required");
-            }
-            if (employee.getEmail() == null || employee.getEmail().isEmpty()) {
-                throw new Exception("Email is required");
-            }
-
-            employeeService.saveEmployee(employee);
-            redirectAttributes.addFlashAttribute("success", "Employee added successfully!");
-            return "redirect:/admin/employees";
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/admin/add-employee";
-        }
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
     }
 
     @GetMapping("/employees")
@@ -181,7 +117,6 @@ public class AdminController {
         return "employee_list";
     }
 
-<<<<<<< HEAD
     @GetMapping("/add-employee")
     public String showAddEmployeeForm(HttpSession session, Model model) {
         if (!isAdmin(session, model))
@@ -226,40 +161,25 @@ public class AdminController {
         }
     }
 
-=======
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
     @GetMapping("/edit-employee/{id}")
     public String showEditEmployeeForm(@PathVariable Long id, HttpSession session, Model model) {
         if (!isAdmin(session, model))
             return "redirect:/";
 
-<<<<<<< HEAD
         EmployeeDTO employee = employeeService.getEmployeeDTOById(id);
         if (employee == null) {
-=======
-        Employee employee = employeeService.getEmployeeById(id);
-        if (employee == null) {
-            model.addAttribute("error", "Employee not found");
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
             return "redirect:/admin/employees";
         }
 
         model.addAttribute("employee", employee);
         model.addAttribute("managers", employeeService.getManagers());
-<<<<<<< HEAD
         model.addAttribute("designations", designationService.getAllDesignations());
         model.addAttribute("departments", departmentService.getAllDepartments());
-=======
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
         return "edit_employee";
     }
 
     @PostMapping("/edit-employee")
-<<<<<<< HEAD
     public String editEmployee(@ModelAttribute EmployeeDTO employeeDTO,
-=======
-    public String updateEmployee(@ModelAttribute Employee employee,
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
             HttpSession session,
             Model model,
             RedirectAttributes redirectAttributes) {
@@ -267,7 +187,6 @@ public class AdminController {
             return "redirect:/";
 
         try {
-<<<<<<< HEAD
             employeeService.saveEmployee(employeeDTO);
             recordAdminActivity(session, "Employee Management", "Employee Updated",
                     "Updated employee ID " + employeeDTO.getId());
@@ -910,27 +829,6 @@ public class AdminController {
             systemActivityLogService.logActivity(getLoggedInUser(session), moduleName, actionName, details);
         } catch (Exception ignored) {
             // Activity logs should not break the primary admin flow.
-=======
-            // Validation (mostly similar to add, but we check if ID exists)
-            if (employee.getId() == null)
-                throw new Exception("Employee ID is missing");
-
-            Employee existing = employeeService.getEmployeeById(employee.getId());
-            if (existing == null)
-                throw new Exception("Employee record does not exist");
-
-            // Keep existing password if not provided in form (security)
-            if (employee.getPassword() == null || employee.getPassword().isEmpty()) {
-                employee.setPassword(existing.getPassword());
-            }
-
-            employeeService.saveEmployee(employee);
-            redirectAttributes.addFlashAttribute("success", "Employee updated successfully!");
-            return "redirect:/admin/employees";
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/admin/edit-employee/" + employee.getId();
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
         }
     }
 }

@@ -6,7 +6,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "announcements")
-public class Announcement {
+public class Announcement
+{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

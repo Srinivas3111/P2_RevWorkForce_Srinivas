@@ -195,42 +195,7 @@
 
     <div class="dashboard-wrapper">
         <!-- Dashboard Sidebar -->
-<<<<<<< HEAD
         <aside class="sidebar" th:replace="~{fragments/admin_sidebar :: adminSidebar('employees')}"></aside>
-=======
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <a th:href="@{/admin/dashboard}" class="sidebar-logo">REVATURE</a>
-            </div>
-
-            <ul class="sidebar-menu">
-                <li class="menu-item">
-                    <a th:href="@{/admin/dashboard}" class="menu-link">
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a th:href="@{/admin/employees}" class="menu-link">
-                        <span>Manage Employees</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a th:href="@{/admin/add-employee}" class="menu-link">
-                        <span>Add Employee</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <span>Audit Logs</span>
-                    </a>
-                </li>
-            </ul>
-
-            <div class="sidebar-footer">
-                <a th:href="@{/logout}" class="btn btn-logout" style="width: 100%; text-align: center;">Logout</a>
-            </div>
-        </aside>
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
 
         <main class="main-content">
             <div class="main-content-flex">
@@ -258,12 +223,8 @@
                                 <div style="display:flex;">
                                     <input type="text" id="username_input"
                                         th:value="${employee.email != null && employee.email.contains('@') ? employee.email.split('@')[0] : employee.email}"
-<<<<<<< HEAD
                                         style="border-radius:8px 0 0 8px; background: #f1f5f9; cursor: not-allowed;"
                                         readonly>
-=======
-                                        style="border-radius:8px 0 0 8px;">
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
                                     <span
                                         style="padding:10px;background:#f1f5f9;border:1.5px solid #e2e8f0;border-left:none;border-radius:0 8px 8px 0; font-size: 12px; white-space: nowrap;">
                                         @revworkforce.com
@@ -276,24 +237,10 @@
                             <!-- First Name -->
                             <div class="form-group">
                                 <label>First Name *</label>
-<<<<<<< HEAD
                                 <input type="text" th:field="*{firstName}" id="firstName" readonly>
                                 <div class="error" id="err-firstName">Only alphabets allowed.</div>
                             </div>
 
-=======
-                                <input type="text" th:field="*{firstName}" id="firstName">
-                                <div class="error" id="err-firstName">Only alphabets allowed.</div>
-                            </div>
-
-                            <!-- Last Name -->
-                            <div class="form-group">
-                                <label>Last Name *</label>
-                                <input type="text" th:field="*{lastName}" id="lastName">
-                                <div class="error" id="err-lastName">Only alphabets allowed.</div>
-                            </div>
-
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
                             <!-- Gender -->
                             <div class="form-group">
                                 <label>Gender *</label>
@@ -316,11 +263,7 @@
                             <!-- DOB -->
                             <div class="form-group">
                                 <label>Date of Birth *</label>
-<<<<<<< HEAD
                                 <input type="date" name="dateOfBirth" th:value="${employee.dateOfBirth}" id="dob">
-=======
-                                <input type="date" th:field="*{dateOfBirth}" id="dob">
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
                                 <div class="error" id="err-dob">Must be 18+ and not future.</div>
                             </div>
 
@@ -329,13 +272,8 @@
                                 <label>Department *</label>
                                 <select th:field="*{department}" id="department">
                                     <option value="">Select</option>
-<<<<<<< HEAD
                                     <option th:each="dept : ${departments}" th:value="${dept.name}"
                                         th:text="${dept.name}"></option>
-=======
-                                    <option value="IT">IT</option>
-                                    <option value="Sales & Marketing">Sales & Marketing</option>
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
                                 </select>
                                 <div class="error" id="err-department">Select department.</div>
                             </div>
@@ -344,13 +282,9 @@
                             <div class="form-group">
                                 <label>Designation *</label>
                                 <select th:field="*{designation}" id="designation">
-<<<<<<< HEAD
                                     <option value="">Select</option>
                                     <option th:each="des : ${designations}" th:value="${des.name}"
                                         th:text="${des.name}"></option>
-=======
-                                    <option value="">Select Department First</option>
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
                                 </select>
                                 <div class="error" id="err-designation">Select designation.</div>
                             </div>
@@ -358,14 +292,9 @@
                             <!-- Joining Date -->
                             <div class="form-group">
                                 <label>Joining Date *</label>
-<<<<<<< HEAD
                                 <input type="date" name="joiningDate" th:value="${employee.joiningDate}"
                                     id="joiningDate" onchange="validateJoiningDate(this)">
                                 <div class="error" id="err-joiningDate">Cannot be a future date.</div>
-=======
-                                <input type="date" th:field="*{joiningDate}" id="joiningDate">
-                                <div class="error" id="err-joiningDate">Cannot be future date.</div>
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
                             </div>
 
                             <!-- Salary -->
@@ -379,10 +308,7 @@
                             <div class="form-group">
                                 <label>Role *</label>
                                 <select th:field="*{role}" id="role">
-<<<<<<< HEAD
                                     <option value="ADMIN">ADMIN</option>
-=======
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
                                     <option value="EMPLOYEE">EMPLOYEE</option>
                                     <option value="MANAGER">MANAGER</option>
                                 </select>
@@ -391,22 +317,14 @@
                             <!-- Manager Selection -->
                             <div class="form-group" id="managerGroup">
                                 <label>Reporting Manager *</label>
-<<<<<<< HEAD
                                 <select th:field="*{managerId}" id="manager">
                                     <option value="">Select Manager</option>
                                     <option th:each="m : ${managers}" th:value="${m.id}" th:text="${m.firstName}">
                                     </option>
-=======
-                                <select th:field="*{manager.id}" id="manager">
-                                    <option value="">Select Manager</option>
-                                    <option th:each="m : ${managers}" th:value="${m.id}"
-                                        th:text="${m.firstName + ' ' + m.lastName}"></option>
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
                                 </select>
                                 <div class="error" id="err-manager">Manager required for employees.</div>
                             </div>
 
-<<<<<<< HEAD
                             <!-- Current Password (Readonly) -->
                             <div class="form-group">
                                 <label>Current Password</label>
@@ -423,32 +341,11 @@
 
                             <!-- Status Hidden Input to prevent deactivation when submitting form -->
                             <input type="hidden" th:field="*{active}">
-=======
-                            <!-- Password (Optional on Edit) -->
-                            <div class="form-group">
-                                <label>Password (Leave blank to keep current)</label>
-                                <input type="password" th:field="*{password}" id="password">
-                                <div class="error" id="err-password">Minimum 6 characters if provided.</div>
-                            </div>
-
-                            <!-- Status -->
-                            <div class="form-group">
-                                <label>Active Status</label>
-                                <select th:field="*{active}">
-                                    <option th:value="true">Active</option>
-                                    <option th:value="false">Inactive</option>
-                                </select>
-                            </div>
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
 
                             <!-- Address -->
                             <div class="form-group full-width">
                                 <label>Address</label>
-<<<<<<< HEAD
                                 <textarea th:field="*{address}" id="address" rows="2" maxlength="500"></textarea>
-=======
-                                <textarea th:field="*{address}" id="address" rows="2"></textarea>
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
                             </div>
                         </div>
 
@@ -463,26 +360,12 @@
         </main>
     </div>
 
-<<<<<<< HEAD
     <script>
         // Block future dates via max attribute
-=======
-    <script th:inline="javascript">
-        // Designation map
-        const designationMap = {
-            "IT": ["Software Developer", "Senior Developer", "QA Engineer", "Team Lead", "Project Manager", "System Administrator"],
-            "Sales & Marketing": ["Sales Executive", "Sales Manager", "Marketing Executive", "Marketing Manager"]
-        };
-
-        const initialDesignation = /*[[${employee.designation}]]*/ '';
-
-        // Block future dates
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
         const todayStr = new Date().toISOString().split("T")[0];
         document.getElementById("dob").max = todayStr;
         document.getElementById("joiningDate").max = todayStr;
 
-<<<<<<< HEAD
         // Live onchange validation for Joining Date
         function validateJoiningDate(input) {
             const errorEl = document.getElementById("err-joiningDate");
@@ -506,29 +389,6 @@
         document.getElementById("role").addEventListener("change", function () {
             document.getElementById("managerGroup").style.display =
                 (this.value === "EMPLOYEE") ? "flex" : "none";
-=======
-        function updateDesignations() {
-            const dept = document.getElementById("department").value;
-            const desig = document.getElementById("designation");
-
-            desig.innerHTML = '<option value="">Select Designation</option>';
-            if (designationMap[dept]) {
-                designationMap[dept].forEach(d => {
-                    const opt = document.createElement("option");
-                    opt.value = d;
-                    opt.textContent = d;
-                    if (d === initialDesignation) opt.selected = true;
-                    desig.appendChild(opt);
-                });
-            }
-        }
-
-        document.getElementById("department").addEventListener("change", updateDesignations);
-
-        document.getElementById("role").addEventListener("change", function () {
-            document.getElementById("managerGroup").style.display =
-                (this.value === "MANAGER") ? "none" : "flex";
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
         });
 
         document.getElementById("employeeForm").addEventListener("submit", function (e) {
@@ -558,10 +418,6 @@
             // Validations
             check("username_input", /^[a-zA-Z0-9.]+$/.test(usernameVal));
             check("firstName", /^[A-Za-z]+$/.test(document.getElementById("firstName").value.trim()));
-<<<<<<< HEAD
-=======
-            check("lastName", /^[A-Za-z]+$/.test(document.getElementById("lastName").value.trim()));
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
             check("gender", document.getElementById("gender").value !== "");
             check("phone", /^\d{10}$/.test(document.getElementById("phone").value.trim()));
 
@@ -613,7 +469,6 @@
         });
 
         // Run on init
-<<<<<<< HEAD
         document.getElementById("managerGroup").style.display =
             (document.getElementById("role").value === "EMPLOYEE") ? "flex" : "none";
 
@@ -662,11 +517,6 @@
         if (departmentSelect.value) {
             updateDesignations(true);
         }
-=======
-        updateDesignations();
-        document.getElementById("managerGroup").style.display =
-            (document.getElementById("role").value === "MANAGER") ? "none" : "flex";
->>>>>>> b09ad693854b4496e321429ab9250ea0c6c408cf
     </script>
 
 </body>
