@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Add Employee | RevWorkforce</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --error: #ef4444;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+        }
+
+        /* Sidebar compatibility */
+        .dashboard-wrapper {
+            display: flex;
+            width: 100%;
+        }
+
+        .main-content-flex {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 950px;
+            background: var(--white);
+            padding: 35px;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            height: fit-content;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            color: var(--primary-dark);
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        @media(max-width:900px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width:600px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .full-width {
+            grid-column: span 3;
+        }
+
+        @media(max-width:900px) {
+            .full-width {
+                grid-column: span 2;
+            }
+        }
+
+        @media(max-width:600px) {
+            .full-width {
+                grid-column: span 1;
+            }
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #475569;
+        }
+
+        input,
+        select,
+        textarea {
+            padding: 10px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        input[readonly] {
+            background: #f1f5f9;
+            cursor: not-allowed;
+        }
+
+        .error {
+            font-size: 11px;
+            color: var(--error);
+            margin-top: 4px;
+            display: none;
+        }
+
+        .invalid {
+            border-color: var(--error);
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        button[type="submit"] {
+            flex: 2;
+            padding: 12px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button[type="submit"]:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-cancel {
+            flex: 1;
+            padding: 12px;
+            background: #fff;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard-wrapper">
+        <!-- Dashboard Sidebar -->
+        <aside class="sidebar" th:replace="~{fragments/admin_sidebar :: adminSidebar('add-employee')}"></aside>
+
+        <main class="main-content">
+            <div class="main-content-flex">
+                <div class="container">
+                    <h2>Onboard New Employee</h2>
+
+                    <!-- Server Side Messages -->
+                    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+                    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+                    <div id="js-alert" class="alert alert-error" style="display:none;"></div>
+
+                    <form id="employeeForm" th:action="@{/admin/add-employee}" th:object="${employee}" method="POST"
+                        novalidate>
+
+                        <div class="grid">
+                            <!-- Employee ID -->
+                            <div class="form-group">
+                                <label>Employee ID</label>
+                                <input type="text" th:field="*{id}" readonly>
+                            </div>
+
+                            <!-- Email Construction -->
+                            <div class="form-group">
+                                <label>Email *</label>
+                                <div style="display:flex;">
+                                    <input type="text" id="username_input" placeholder="jdoe"
+                                        style="border-radius:8px 0 0 8px;">
+                                    <span
+                                        style="padding:10px;background:#f1f5f9;border:1.5px solid #e2e8f0;border-left:none;border-radius:0 8px 8px 0; font-size: 12px; white-space: nowrap;">
+                                        @revworkforce.com
+                                    </span>
+                                </div>
+                                <input type="hidden" id="email_hidden" th:field="*{email}">
+                                <div class="error" id="err-username_input">Only letters, numbers and dot allowed.</div>
+                            </div>
+
+                            <!-- First Name -->
+                            <div class="form-group">
+                                <label>First Name *</label>
+                                <input type="text" th:field="*{firstName}" id="firstName">
+                                <div class="error" id="err-firstName">Only alphabets allowed.</div>
+                            </div>
+
+                            <!-- Gender -->
+                            <div class="form-group">
+                                <label>Gender *</label>
+                                <select th:field="*{gender}" id="gender">
+                                    <option value="">Select</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <div class="error" id="err-gender">Select gender.</div>
+                            </div>
+
+                            <!-- Phone -->
+                            <div class="form-group">
+                                <label>Phone *</label>
+                                <input type="text" th:field="*{phoneNumber}" id="phone" maxlength="10">
+                                <div class="error" id="err-phone">Must be exactly 10 digits.</div>
+                            </div>
+
+                            <!-- DOB -->
+                            <div class="form-group">
+                                <label>Date of Birth *</label>
+                                <input type="date" th:field="*{dateOfBirth}" id="dob">
+                                <div class="error" id="err-dob">Must be 18+ and not future.</div>
+                            </div>
+
+                            <!-- Department -->
+                            <div class="form-group">
+                                <label>Department *</label>
+                                <select th:field="*{department}" id="department">
+                                    <option value="">Select</option>
+                                    <option th:each="dept : ${departments}" th:value="${dept.name}"
+                                        th:text="${dept.name}"></option>
+                                </select>
+                                <div class="error" id="err-department">Select department.</div>
+                            </div>
+
+                            <!-- Designation -->
+                            <div class="form-group">
+                                <label>Designation *</label>
+                                <select th:field="*{designation}" id="designation">
+                                    <option value="">Select</option>
+                                    <option th:each="des : ${designations}" th:value="${des.name}"
+                                        th:text="${des.name}"></option>
+                                </select>
+                                <div class="error" id="err-designation">Select designation.</div>
+                            </div>
+
+                            <!-- Joining Date -->
+                            <div class="form-group">
+                                <label>Joining Date *</label>
+                                <input type="date" th:field="*{joiningDate}" id="joiningDate"
+                                    onchange="validateJoiningDate(this)">
+                                <div class="error" id="err-joiningDate">Joining date cannot be a future date.</div>
+                            </div>
+
+                            <!-- Salary -->
+                            <div class="form-group">
+                                <label>Salary *</label>
+                                <input type="number" step="0.01" th:field="*{salary}" id="salary">
+                                <div class="error" id="err-salary">Must be positive number.</div>
+                            </div>
+
+                            <!-- Role -->
+                            <div class="form-group">
+                                <label>Role *</label>
+                                <select th:field="*{role}" id="role">
+                                    <option value="EMPLOYEE">EMPLOYEE</option>
+                                    <option value="MANAGER">MANAGER</option>
+                                </select>
+                            </div>
+
+                            <!-- Manager Selection -->
+                            <div class="form-group" id="managerGroup">
+                                <label>Reporting Manager *</label>
+                                <select th:field="*{managerId}" id="manager">
+                                    <option value="">Select Manager</option>
+                                    <option th:each="m : ${managers}" th:value="${m.id}" th:text="${m.firstName}">
+                                    </option>
+                                </select>
+                                <div class="error" id="err-manager">Manager required for employees.</div>
+                            </div>
+
+                            <!-- Password -->
+                            <div class="form-group">
+                                <label>Password *</label>
+                                <input type="password" th:field="*{password}" id="password" autocomplete="new-password">
+                                <div class="error" id="err-password">Minimum 6 characters.</div>
+                            </div>
+
+                            <!-- Address -->
+                            <div class="form-group full-width">
+                                <label>Address</label>
+                                <textarea th:field="*{address}" id="address" rows="2"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="btn-row">
+                            <button type="submit">Create Employee</button>
+                            <a th:href="@{/admin/employees}" class="btn-cancel">Cancel</a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Get today's date in YYYY-MM-DD (timezone safe)
+        function getTodayString() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        const joiningInput = document.getElementById("joiningDate");
+        const joiningError = document.getElementById("err-joiningDate");
+
+        // Block future date in calendar
+        joiningInput.setAttribute("max", getTodayString());
+        document.getElementById("dob").setAttribute("max", getTodayString());
+
+        function validateJoiningDate() {
+            if (!joiningInput.value) {
+                joiningError.style.display = "none";
+                joiningInput.classList.remove("invalid");
+                return false;
+            }
+
+            const selectedDate = new Date(joiningInput.value);
+            const today = new Date();
+
+            // Remove time part for fair comparison
+            today.setHours(0, 0, 0, 0);
+            selectedDate.setHours(0, 0, 0, 0);
+
+            if (selectedDate > today) {
+                joiningError.style.display = "block";
+                joiningInput.classList.add("invalid");
+                return false;
+            } else {
+                joiningError.style.display = "none";
+                joiningInput.classList.remove("invalid");
+                return true;
+            }
+        }
+
+        // Validate when date changes
+        joiningInput.addEventListener("change", validateJoiningDate);
+
+        document.getElementById("role").addEventListener("change", function () {
+            document.getElementById("managerGroup").style.display =
+                (this.value === "MANAGER") ? "none" : "flex";
+        });
+
+        document.getElementById("employeeForm").addEventListener("submit", function (e) {
+            let valid = true;
+            const jsAlert = document.getElementById("js-alert");
+            jsAlert.style.display = "none";
+
+            function check(id, condition) {
+                const input = document.getElementById(id);
+                const error = document.getElementById("err-" + id);
+                if (!condition) {
+                    input.classList.add("invalid");
+                    if (error) error.style.display = "block";
+                    valid = false;
+                } else {
+                    input.classList.remove("invalid");
+                    if (error) error.style.display = "none";
+                }
+            }
+
+            // Email combination logic
+            const usernameInput = document.getElementById("username_input");
+            const emailHidden = document.getElementById("email_hidden");
+            const usernameVal = usernameInput.value.trim().toLowerCase();
+            usernameInput.value = usernameVal; // Force lowercase in UI too
+            emailHidden.value = usernameVal ? (usernameVal + "@revworkforce.com") : "";
+
+            // Validations
+            check("username_input", /^[a-zA-Z0-9.]+$/.test(usernameVal));
+            check("firstName", /^[A-Za-z]+$/.test(document.getElementById("firstName").value.trim()));
+            check("gender", document.getElementById("gender").value !== "");
+            check("phone", /^\d{10}$/.test(document.getElementById("phone").value.trim()));
+
+            // DOB Check (18+)
+            const dobInput = document.getElementById("dob");
+            if (!dobInput.value) {
+                check("dob", false);
+            } else {
+                const dobDate = new Date(dobInput.value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                let age = today.getFullYear() - dobDate.getFullYear();
+                const m = today.getMonth() - dobDate.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < dobDate.getDate())) age--;
+                check("dob", dobDate <= today && age >= 18);
+            }
+
+            check("department", document.getElementById("department").value !== "");
+            check("designation", document.getElementById("designation").value !== "");
+
+            // Joining Date — uses validateJoiningDate() defined above
+            if (!validateJoiningDate()) {
+                valid = false;
+            }
+
+            check("salary", document.getElementById("salary").value > 0);
+
+            if (document.getElementById("role").value === "EMPLOYEE") {
+                check("manager", document.getElementById("manager").value !== "");
+            }
+
+            check("password", document.getElementById("password").value.length >= 6);
+
+            if (!valid) {
+                e.preventDefault();
+                jsAlert.textContent = "Please correct the errors highlighted below.";
+                jsAlert.style.display = "block";
+                const firstError = document.querySelector(".invalid");
+                if (firstError) firstError.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+        });
+
+        const departmentSelect = document.getElementById("department");
+        const designationSelect = document.getElementById("designation");
+        const initialDesignation = designationSelect.value;
+
+        async function updateDesignations(isInit = false) {
+            const dept = departmentSelect.value;
+            const currentSelected = isInit ? initialDesignation : designationSelect.value;
+
+            if (!dept) {
+                designationSelect.innerHTML = '<option value="">Select</option>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/admin/api/designations/by-department?departmentName=${encodeURIComponent(dept)}`);
+                const designations = await response.json();
+
+                designationSelect.innerHTML = '<option value="">Select</option>';
+                designations.forEach(desig => {
+                    const opt = document.createElement("option");
+                    opt.value = desig.name;
+                    opt.text = desig.name;
+                    if (desig.name === currentSelected) opt.selected = true;
+                    designationSelect.appendChild(opt);
+                });
+
+                // If it's init and we have a value but it's not in the list (legacy data), add it
+                if (isInit && currentSelected && !designations.some(d => d.name === currentSelected)) {
+                    const opt = document.createElement("option");
+                    opt.value = currentSelected;
+                    opt.text = currentSelected;
+                    opt.selected = true;
+                    designationSelect.appendChild(opt);
+                }
+
+            } catch (error) {
+                console.error("Error fetching designations:", error);
+            }
+        }
+
+        departmentSelect.addEventListener("change", () => updateDesignations(false));
+        if (departmentSelect.value) {
+            updateDesignations(true);
+        }
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | Revature</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <style>
+        .profile-container {
+            display: grid;
+            gap: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .info-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            transition: all 0.2s;
+        }
+
+        .info-card:hover {
+            border-color: var(--primary-light);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .info-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .form-control {
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(58, 108, 244, 0.1);
+        }
+
+        .readonly-tag {
+            font-size: 10px;
+            background: #f1f5f9;
+            color: #64748b;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar"
+            th:replace="${user.role == 'MANAGER'} ? ~{manager_dashboard :: sidebar} : ~{employee_dashboard :: sidebar}">
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <a class="notif-bell-wrap" th:href="@{/notifications}" title="Notifications">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                        </svg>
+                        <span class="notif-badge" th:attr="data-count=${unreadCount}"
+                            th:text="${unreadCount > 0 ? unreadCount : ''}"
+                            th:if="${unreadCount != null and unreadCount > 0}"></span>
+                    </a>
+                    <span th:text="${user.name}">Employee Name</span>
+                    <div class="avatar" th:text="${user.name.substring(0,1)}">E</div>
+                </div>
+            </header>
+
+            <div class="page-header">
+                <h1 class="page-title">Profile</h1>
+                <p class="page-subtitle">View your reporting hierarchy and personal identity information.</p>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+            <div class="profile-container">
+                <!-- 1. Manager Details Section (Assigned Reporting Manager) -->
+                <div class="card">
+                    <div class="section-header">
+                        <h2 class="section-title">Reporting Manager</h2>
+                    </div>
+                    <div th:if="${manager == null}"
+                        style="padding: 20px; text-align: center; color: var(--text-muted); background: #f8fafc; border-radius: 8px;">
+                        No reporting manager has been assigned to your profile yet.
+                    </div>
+                    <div class="info-grid" th:if="${manager != null}">
+                        <div class="info-card">
+                            <div class="info-label">Manager Name</div>
+                            <div class="info-value" th:text="${manager.name}">Manager Name</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Employee ID</div>
+                            <div class="info-value" th:text="${manager.id}">ID</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Email</div>
+                            <div class="info-value" th:text="${manager.email}">Email</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Mobile Number</div>
+                            <div class="info-value" th:text="${manager.phoneNumber}">Phone</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Department</div>
+                            <div class="info-value" th:text="${manager.department}">Department</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Designation</div>
+                            <div class="info-value" th:text="${manager.designation}">Designation</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Employee Details Section -->
+                <div class="card">
+                    <div class="section-header">
+                        <h2 class="section-title">Employee Details <span class="readonly-tag">Read-Only</span></h2>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <div class="info-label">Name</div>
+                            <div class="info-value" th:text="${employee.name}">Name</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Employee ID</div>
+                            <div class="info-value" th:text="${employee.id}">ID</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Email</div>
+                            <div class="info-value" th:text="${employee.email}">Email</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Mobile Number</div>
+                            <div class="info-value" th:text="${employee.phoneNumber}">Phone</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Joining Date</div>
+                            <div class="info-value"
+                                th:text="${employee.joiningDate != null ? #temporals.format(employee.joiningDate, 'dd MMM yyyy') : 'N/A'}">
+                                Date</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Date of Birth</div>
+                            <div class="info-value"
+                                th:text="${employee.dateOfBirth != null ? #temporals.format(employee.dateOfBirth, 'dd MMM yyyy') : 'N/A'}">
+                                DOB</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Department</div>
+                            <div class="info-value" th:text="${employee.department}">Department</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Designation</div>
+                            <div class="info-value" th:text="${employee.designation}">Designation</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Update Contact Section -->
+                <div class="card">
+                    <div class="section-header">
+                        <h2 class="section-title">Update Contact Information</h2>
+                    </div>
+                    <form th:action="@{/employee/profile/update}" method="post" class="form-grid">
+                        <div class="form-group">
+                            <label for="phoneNumber">Mobile Number</label>
+                            <input type="text" id="phoneNumber" name="phoneNumber" class="form-control"
+                                th:value="${employee.phoneNumber}" required maxlength="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="emergencyContactNumber">Emergency Contact Number</label>
+                            <input type="text" id="emergencyContactNumber" name="emergencyContactNumber"
+                                class="form-control" th:value="${employee.emergencyContactNumber}" maxlength="10">
+                        </div>
+                        <div class="form-group full">
+                            <label for="address">Address</label>
+                            <textarea id="address" name="address" class="form-control" rows="3"
+                                th:text="${employee.address}" maxlength="500"></textarea>
+                        </div>
+                        <div class="form-group full">
+                            <button type="submit" class="btn btn-primary" style="width: fit-content;">Save
+                                Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

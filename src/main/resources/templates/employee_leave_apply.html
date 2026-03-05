@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply Leave | Revature</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <style>
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .form-group {
+            display: grid;
+            gap: 6px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 14px;
+            background: #fff;
+            color: var(--text-main);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(58, 108, 244, 0.12);
+        }
+
+        .alert {
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 14px;
+            font-weight: 600;
+        }
+
+        .alert-success {
+            background: #ecfdf3;
+            border: 1px solid #a7f3d0;
+            color: #047857;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 760px;
+            color: var(--text-main);
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 14px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            font-weight: 700;
+            background: #f8fafc;
+        }
+
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border: 1px solid transparent;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: #fde68a;
+        }
+
+        .status-approved {
+            background: #ecfdf3;
+            color: #047857;
+            border-color: #a7f3d0;
+        }
+
+        .status-rejected {
+            background: #fef2f2;
+            color: #b91c1c;
+            border-color: #fecaca;
+        }
+
+        .status-cancelled {
+            background: #f1f5f9;
+            color: #475569;
+            border-color: #cbd5e1;
+        }
+
+        .status-default {
+            background: #eef2ff;
+            color: #3730a3;
+            border-color: #c7d2fe;
+        }
+
+        .btn-cancel {
+            background: #fff;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-disabled {
+            background: #f8fafc;
+            color: #94a3b8;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .empty-state {
+            padding: 24px;
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            color: var(--text-muted);
+            text-align: center;
+            font-weight: 600;
+            background: #fff;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar"
+            th:replace="${user.role == 'MANAGER'} ? ~{manager_dashboard :: sidebar} : ~{employee_dashboard :: sidebar}">
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <a class="notif-bell-wrap" th:href="@{/notifications}" title="Notifications">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                        </svg>
+                        <span class="notif-badge" th:attr="data-count=${unreadCount}"
+                            th:text="${unreadCount > 0 ? unreadCount : ''}"
+                            th:if="${unreadCount != null and unreadCount > 0}"></span>
+                    </a>
+                    <span th:text="${user.name}">Employee Name</span>
+                    <div class="avatar" th:text="${user.name.substring(0,1)}">E</div>
+                </div>
+            </header>
+
+            <div class="page-header">
+                <h1 class="page-title">Apply for Leave</h1>
+                <p class="page-subtitle">Submit leave request for manager approval.</p>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+            <div class="card">
+                <form th:action="@{/employee/leave/apply}" method="post" class="form-grid">
+                    <div class="form-group">
+                        <label for="leaveTypeId">Leave Type</label>
+                        <select id="leaveTypeId" name="leaveTypeId" required>
+                            <option value="">Select leave type</option>
+                            <option th:each="t : ${leaveTypes}" th:value="${t.id}" th:text="${t.name}">Casual Leave
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="startDate">Start Date</label>
+                        <input id="startDate" name="startDate" type="date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="endDate">End Date</label>
+                        <input id="endDate" name="endDate" type="date" required>
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="reason">Reason (required, minimum 5 characters)</label>
+                        <textarea id="reason" name="reason" maxlength="250" minlength="5" required
+                            placeholder="Brief reason for leave"></textarea>
+                    </div>
+
+                    <div class="form-group full">
+                        <button type="submit" class="btn btn-primary">Submit Leave Request</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card" style="margin-top: 16px;">
+                <div class="card-header">
+                    <h2 class="page-title" style="font-size: 20px;">My Leave Requests</h2>
+                </div>
+
+                <div th:if="${#lists.isEmpty(leaveApplications)}" class="empty-state">
+                    No leave requests found.
+                </div>
+
+                <div class="table-container" th:if="${!#lists.isEmpty(leaveApplications)}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Reason</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="row : ${leaveApplications}">
+                                <td
+                                    th:text="${row.startDate != null ? #temporals.format(row.startDate, 'dd MMM yyyy') : 'N/A'}">
+                                    01 Mar 2026</td>
+                                <td
+                                    th:text="${row.endDate != null ? #temporals.format(row.endDate, 'dd MMM yyyy') : 'N/A'}">
+                                    03 Mar 2026</td>
+                                <td th:text="${row.leaveTypeName != null ? row.leaveTypeName : 'N/A'}">Casual Leave</td>
+                                <td>
+                                    <span class="status-badge"
+                                        th:classappend="${row.status == null ? ' status-default' : ' status-' + #strings.toLowerCase(row.status.trim())}"
+                                        th:text="${row.status != null ? row.status : 'N/A'}">PENDING</span>
+                                </td>
+                                <td
+                                    th:text="${row.reason != null and !#strings.isEmpty(row.reason) ? row.reason : '-'}">
+                                    Personal work</td>
+                                <td>
+                                    <form
+                                        th:if="${row.status != null and row.status.equalsIgnoreCase('PENDING') and row.startDate != null and row.startDate.isAfter(today)}"
+                                        th:action="@{/employee/leave/{leaveId}/cancel(leaveId=${row.id})}" method="post"
+                                        onsubmit="return confirm('Cancel this leave request?');">
+                                        <button type="submit" class="btn-cancel">Cancel</button>
+                                    </form>
+                                    <button
+                                        th:if="${row.status != null and row.status.equalsIgnoreCase('PENDING') and (row.startDate == null or !row.startDate.isAfter(today))}"
+                                        type="button" class="btn-disabled" disabled>Started</button>
+                                    <button th:if="${row.status == null or !row.status.equalsIgnoreCase('PENDING')}"
+                                        type="button" class="btn-disabled" disabled>Not Allowed</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

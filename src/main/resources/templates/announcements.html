@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Announcements | Revature</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <style>
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            border: 1.5px solid #d7e2f0;
+            border-radius: 12px;
+            padding: 11px 13px;
+            font-size: 14px;
+            color: var(--text-main);
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 4px rgba(58, 108, 244, 0.14);
+        }
+
+        .field-note {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .alert {
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .alert-success {
+            background: #f0fff4;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert-error {
+            background: #fff5f5;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .announcement-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .announcement-item {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            background: #fff;
+        }
+
+        .announcement-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 12px;
+        }
+
+        .announcement-item-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .announcement-time {
+            font-size: 12px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .announcement-actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: #fff;
+            border: 1px solid #dc2626;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+            border-color: #b91c1c;
+        }
+
+        .status-pill {
+            display: inline-block;
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status-active {
+            background: #ecfdf3;
+            color: #047857;
+        }
+
+        .status-inactive {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        @media (max-width: 900px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar" th:replace="~{fragments/admin_sidebar :: adminSidebar('announcements')}"></aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <a class="notif-bell-wrap" th:href="@{/notifications}" title="Notifications">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                        <span class="notif-badge" th:attr="data-count=${unreadCount}" th:text="${unreadCount > 0 ? unreadCount : ''}" th:if="${unreadCount != null and unreadCount > 0}"></span>
+                    </a>
+                    <span th:text="${user != null ? user.name : 'Admin'}">Admin</span>
+                    <div class="avatar" th:text="${user != null ? user.name.substring(0,1) : 'A'}">A</div>
+                </div>
+            </header>
+
+            <div class="page-header">
+                <h1 class="page-title">Manage Company Announcements</h1>
+                <p class="page-subtitle">Create and manage important announcements visible to employees.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">AN</div>
+                    <div class="stat-value" th:text="${totalAnnouncements}">0</div>
+                    <div class="stat-label">Total Announcements</div>
+                </div>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+            <section class="card" style="margin-bottom: 16px;">
+                <h2 class="page-title" style="font-size: 20px; margin-bottom: 10px;">Create Announcement</h2>
+                <form th:action="@{/admin/announcements}" method="post" class="form-grid">
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input id="title" type="text" name="title" placeholder="Ex: Quarterly town hall update" required maxlength="160">
+                    </div>
+                    <div class="form-group">
+                        <label for="active">Status</label>
+                        <select id="active" name="active">
+                            <option value="true" selected>Active</option>
+                            <option value="false">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" placeholder="Write the announcement for employees..." required maxlength="2000"></textarea>
+                        <p class="field-note">Active announcements are visible in employee and manager dashboards.</p>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary">Publish Announcement</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="card">
+                <h2 class="page-title" style="font-size: 20px; margin-bottom: 12px;">Existing Announcements</h2>
+                <div class="announcement-list">
+                    <div th:if="${#lists.isEmpty(announcements)}" class="page-subtitle">No announcements created yet.</div>
+
+                    <div class="announcement-item" th:each="a : ${announcements}">
+                        <div class="announcement-item-header">
+                            <div class="announcement-item-title" th:text="${a.title}">Announcement Title</div>
+                            <div class="announcement-time"
+                                th:text="${a.updatedOn != null ? #temporals.format(a.updatedOn, 'dd MMM yyyy HH:mm') : 'N/A'}">
+                                28 Feb 2026 20:10
+                            </div>
+                        </div>
+
+                        <form th:action="@{/admin/announcements/{id}/update(id=${a.id})}" method="post" class="form-grid">
+                            <div class="form-group">
+                                <label>Title</label>
+                                <input type="text" name="title" th:value="${a.title}" maxlength="160" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select name="active">
+                                    <option value="true" th:selected="${a.active}">Active</option>
+                                    <option value="false" th:selected="${!a.active}">Inactive</option>
+                                </select>
+                            </div>
+                            <div class="form-group full">
+                                <label>Message</label>
+                                <textarea name="message" maxlength="2000" required th:text="${a.message}"></textarea>
+                            </div>
+                            <div class="announcement-actions">
+                                <button type="submit" class="btn btn-primary">Update</button>
+                                <span class="status-pill"
+                                    th:classappend="${a.active ? ' status-active' : ' status-inactive'}"
+                                    th:text="${a.active ? 'Active' : 'Inactive'}">Active</span>
+                            </div>
+                        </form>
+
+                        <form th:action="@{/admin/announcements/{id}/delete(id=${a.id})}" method="post"
+                            onsubmit="return confirm('Delete this announcement?');" style="margin-top: 10px;">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+
+</html>
+

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Management | Revature</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <style>
+        .grid-two {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .form-grid .full {
+            grid-column: span 2;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--text-main);
+        }
+
+        .form-group textarea {
+            min-height: 78px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(58, 108, 244, 0.12);
+        }
+
+        .hint {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-bottom: 14px;
+            background: linear-gradient(135deg, #f8fbff 0%, #f1f6ff 100%);
+            border: 1px solid #d8e4ff;
+            border-left: 4px solid var(--primary-light);
+            border-radius: 10px;
+            padding: 14px 16px;
+        }
+
+        .hint-title {
+            margin: 0 0 6px;
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .hint-line {
+            margin: 0 0 8px;
+        }
+
+        .quota-example-list {
+            margin: 0 0 8px;
+            padding-left: 18px;
+        }
+
+        .quota-example-list li {
+            margin-bottom: 4px;
+        }
+
+        .hint-note {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-top: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 11px 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+            text-align: left;
+        }
+
+        th {
+            background: #f8fafc;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            font-size: 11px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            border-radius: 999px;
+            padding: 4px 9px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .badge-active {
+            background: #ecfdf3;
+            color: #047857;
+        }
+
+        .badge-inactive {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        .alert {
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .alert-success {
+            background: #f0fff4;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert-error {
+            background: #fff5f5;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .inline-form {
+            display: inline;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: #fff;
+            border: 1px solid #dc2626;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+            border-color: #b91c1c;
+        }
+
+        .sub-title {
+            font-size: 18px;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .history-status {
+            border-radius: 999px;
+            padding: 4px 9px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+
+        .status-approved {
+            background: #ecfdf3;
+            color: #047857;
+        }
+
+        .status-pending {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+
+        .status-rejected {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        .text-negative {
+            color: #b91c1c;
+            font-weight: 700;
+        }
+
+        @media (max-width: 1100px) {
+            .grid-two {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid .full {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar" th:replace="~{fragments/admin_sidebar :: adminSidebar('leave-management')}"></aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <a class="notif-bell-wrap" th:href="@{/notifications}" title="Notifications">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                        </svg>
+                        <span class="notif-badge" th:attr="data-count=${unreadCount}"
+                            th:text="${unreadCount > 0 ? unreadCount : ''}"
+                            th:if="${unreadCount != null and unreadCount > 0}"></span>
+                    </a>
+                    <span th:text="${user != null ? user.name : 'Admin'}">Admin</span>
+                    <div class="avatar" th:text="${user != null ? user.name.substring(0,1) : 'A'}">A</div>
+                </div>
+            </header>
+
+            <div class="page-header">
+                <h1 class="page-title">Leave Management</h1>
+                <p class="page-subtitle">Configure leave types and assign yearly leave quotas to employees.</p>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+            <div class="grid-two">
+                <div class="card">
+                    <h2 class="sub-title">Configure Leave Types</h2>
+                    <form th:action="@{/admin/leave-types}" method="post">
+                        <input type="hidden" name="year" th:value="${selectedYear}">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Leave Type Name</label>
+                                <input type="text" name="name" placeholder="Casual Leave" required>
+                            </div>
+                            <div class="form-group full">
+                                <label>Description (Optional)</label>
+                                <textarea name="description"
+                                    placeholder="Example: Leave for personal and planned activities"></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Leave Type</button>
+                    </form>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Leave Type</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${#lists.isEmpty(leaveTypes)}">
+                                    <td colspan="4">No leave types configured.</td>
+                                </tr>
+                                <tr th:each="leaveType : ${leaveTypes}">
+                                    <td th:text="${leaveType.name}">Casual Leave</td>
+                                    <td
+                                        th:text="${#strings.isEmpty(leaveType.description) ? 'N/A' : leaveType.description}">
+                                        N/A</td>
+                                    <td>
+                                        <span class="badge"
+                                            th:classappend="${leaveType.active ? ' badge-active' : ' badge-inactive'}"
+                                            th:text="${leaveType.active ? 'Active' : 'Inactive'}">Active</span>
+                                    </td>
+                                    <td>
+                                        <form class="inline-form"
+                                            th:action="@{/admin/leave-types/{id}/status(id=${leaveType.id})}"
+                                            method="post">
+                                            <input type="hidden" name="year" th:value="${selectedYear}">
+                                            <input type="hidden" name="active"
+                                                th:value="${leaveType.active ? false : true}">
+                                            <button type="submit" class="btn"
+                                                th:classappend="${leaveType.active ? ' btn-danger' : ' btn-primary'}"
+                                                th:text="${leaveType.active ? 'Deactivate' : 'Activate'}">Deactivate</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2 class="sub-title">Assign Leave Quotas</h2>
+                    <div class="hint">
+                        <p class="hint-title">Yearly Quota Example</p>
+                        <p class="hint-line">Example yearly quotas for one employee:</p>
+                        <ul class="quota-example-list">
+                            <li>Casual Leave = 12 days</li>
+                            <li>Sick Leave = 8 days</li>
+                            <li>Paid Leave = 15 days</li>
+                        </ul>
+                        <p class="hint-note">Admin can decide any total leave days for a given year.</p>
+                    </div>
+                    <form th:action="@{/admin/leave-quotas}" method="post">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Employee</label>
+                                <select name="employeeId" required>
+                                    <option value="">Select Employee</option>
+                                    <option th:each="emp : ${employees}" th:value="${emp.id}"
+                                        th:text="${emp.id + ' - ' + emp.firstName}"></option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Leave Type</label>
+                                <select name="leaveTypeId" required>
+                                    <option value="">Select Leave Type</option>
+                                    <option th:each="leaveTypeOpt : ${activeLeaveTypes}" th:value="${leaveTypeOpt.id}"
+                                        th:text="${leaveTypeOpt.name}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Year</label>
+                                <input type="number" name="year" min="2000" max="2100" th:value="${selectedYear}"
+                                    required>
+                            </div>
+                            <div class="form-group">
+                                <label>Quota Days</label>
+                                <input type="number" name="quotaDays" min="1" max="366" placeholder="12" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Assign / Update Quota</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="grid-two" style="margin-top: 16px;">
+                <div class="card">
+                    <h2 class="sub-title">Assigned Quotas (<span th:text="${selectedYear}">2026</span>)</h2>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Emp ID</th>
+                                    <th>Employee</th>
+                                    <th>Leave Type</th>
+                                    <th>Days</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${#lists.isEmpty(leaveQuotas)}">
+                                    <td colspan="4">No quotas assigned for this year.</td>
+                                </tr>
+                                <tr th:each="q : ${leaveQuotas}">
+                                    <td th:text="${q.employeeId}">4</td>
+                                    <td th:text="${q.employeeName}">Srinivas Employee</td>
+                                    <td th:text="${q.leaveTypeName}">Casual Leave</td>
+                                    <td th:text="${q.quotaDays}">12</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2 class="sub-title">Total Leave Days by Employee (<span th:text="${selectedYear}">2026</span>)
+                    </h2>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Emp ID</th>
+                                    <th>Employee</th>
+                                    <th>Total Days</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${#lists.isEmpty(quotaSummary)}">
+                                    <td colspan="3">No yearly totals available.</td>
+                                </tr>
+                                <tr th:each="s : ${quotaSummary}">
+                                    <td th:text="${s.employeeId}">4</td>
+                                    <td th:text="${s.employeeName}">Srinivas Employee</td>
+                                    <td th:text="${s.totalDays}">35</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 16px;">
+                <h2 class="sub-title">All Employee Leave Balances (<span th:text="${selectedYear}">2026</span>)</h2>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Emp ID</th>
+                                <th>Employee</th>
+                                <th>Leave Type</th>
+                                <th>Quota</th>
+                                <th>Used</th>
+                                <th>Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(leaveBalances)}">
+                                <td colspan="6">No leave balance data available for this year.</td>
+                            </tr>
+                            <tr th:each="b : ${leaveBalances}">
+                                <td th:text="${b.employeeId}">4</td>
+                                <td th:text="${b.employeeName}">Srinivas Employee</td>
+                                <td th:text="${b.leaveTypeName}">Casual Leave</td>
+                                <td th:text="${b.quotaDays}">12</td>
+                                <td th:text="${b.usedDays}">3</td>
+                                <td th:text="${b.balanceDays}"
+                                    th:classappend="${b.balanceDays < 0 ? ' text-negative' : ''}">9</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 16px;">
+                <h2 class="sub-title">Leave History (<span th:text="${selectedYear}">2026</span>)</h2>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Applied On</th>
+                                <th>Emp ID</th>
+                                <th>Employee</th>
+                                <th>Leave Type</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Days</th>
+                                <th>Status</th>
+                                <th>Reason</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(leaveHistory)}">
+                                <td colspan="10">No leave history available for this year.</td>
+                            </tr>
+                            <tr th:each="h : ${leaveHistory}">
+                                <td th:text="${h.appliedOn}">2026-01-05</td>
+                                <td th:text="${h.employeeId}">4</td>
+                                <td th:text="${h.employeeName}">Srinivas Employee</td>
+                                <td th:text="${h.leaveTypeName}">Casual Leave</td>
+                                <td th:text="${h.startDate}">2026-01-10</td>
+                                <td th:text="${h.endDate}">2026-01-12</td>
+                                <td th:text="${h.leaveDays}">3</td>
+                                <td>
+                                    <span class="history-status"
+                                        th:classappend="${h.status == 'APPROVED' ? ' status-approved' : (h.status == 'REJECTED' ? ' status-rejected' : ' status-pending')}"
+                                        th:text="${h.status}">APPROVED</span>
+                                </td>
+                                <td th:text="${#strings.isEmpty(h.reason) ? 'N/A' : h.reason}">Family event</td>
+                                <td>
+                                    <div th:if="${h.status != null and h.status == 'PENDING'}"
+                                        style="display: flex; gap: 6px;">
+                                        <form th:action="@{/admin/leave/{leaveId}/approve(leaveId=${h.id})}"
+                                            method="post" onsubmit="return confirm('Approve this leave request?');">
+                                            <input type="hidden" name="year" th:value="${selectedYear}">
+                                            <button type="submit" class="btn btn-primary"
+                                                style="padding: 5px 12px; font-size: 12px; border-radius: 6px;">Approve</button>
+                                        </form>
+                                        <form th:action="@{/admin/leave/{leaveId}/reject(leaveId=${h.id})}"
+                                            method="post" onsubmit="return confirm('Reject this leave request?');">
+                                            <input type="hidden" name="year" th:value="${selectedYear}">
+                                            <button type="submit"
+                                                style="padding: 5px 12px; font-size: 12px; border-radius: 6px; background: #fff; color: #b91c1c; border: 1px solid #fecaca; font-weight: 700; cursor: pointer;">Reject</button>
+                                        </form>
+                                    </div>
+                                    <span th:if="${h.status == null or h.status != 'PENDING'}"
+                                        style="color: #94a3b8; font-size: 12px;">—</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holiday Calendar | Revature</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <style>
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .year-form {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .year-form input {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 10px;
+            width: 120px;
+            font-size: 13px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 640px;
+            color: var(--text-main);
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 14px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            font-weight: 700;
+            background: #f8fafc;
+        }
+
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .empty-state {
+            padding: 24px;
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            color: var(--text-muted);
+            text-align: center;
+            font-weight: 600;
+            background: #fff;
+        }
+
+        .note {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar"
+            th:replace="${user.role == 'MANAGER'} ? ~{manager_dashboard :: sidebar} : ~{employee_dashboard :: sidebar}">
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <a class="notif-bell-wrap" th:href="@{/notifications}" title="Notifications">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                        </svg>
+                        <span class="notif-badge" th:attr="data-count=${unreadCount}"
+                            th:text="${unreadCount > 0 ? unreadCount : ''}"
+                            th:if="${unreadCount != null and unreadCount > 0}"></span>
+                    </a>
+                    <span th:text="${user.name}">Employee Name</span>
+                    <div class="avatar" th:text="${user.name.substring(0,1)}">E</div>
+                </div>
+            </header>
+
+            <div class="page-header">
+                <h1 class="page-title">Company Holiday Calendar</h1>
+                <p class="page-subtitle">View official company holidays for planning leave in advance.</p>
+            </div>
+
+            <div class="card">
+                <div class="toolbar">
+                    <div>
+                        <h2 class="page-title" style="font-size: 20px;">Official Holidays</h2>
+                        <p class="page-subtitle">Year: <strong th:text="${selectedYear}">2026</strong></p>
+                    </div>
+                    <form class="year-form" method="get" th:action="@{/employee/holiday-calendar}">
+                        <input type="number" name="year" min="2000" max="2100" th:value="${selectedYear}" required>
+                        <button type="submit" class="btn btn-primary">Load</button>
+                    </form>
+                </div>
+
+                <div th:if="${#lists.isEmpty(holidays)}" class="empty-state">
+                    No official holidays are configured for the selected year.
+                </div>
+
+                <div class="table-container" th:if="${!#lists.isEmpty(holidays)}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Holiday Name</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="holiday : ${holidays}">
+                                <td
+                                    th:text="${holiday.holidayDate != null ? #temporals.format(holiday.holidayDate, 'dd MMM yyyy') : 'N/A'}">
+                                    01 Jan 2026</td>
+                                <td th:text="${holiday.name}">New Year</td>
+                                <td
+                                    th:text="${holiday.description != null && !holiday.description.isBlank() ? holiday.description : '-'}">
+                                    Holiday note</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="note">This calendar is read-only for employees.</p>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

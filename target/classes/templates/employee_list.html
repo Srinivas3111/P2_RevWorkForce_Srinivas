@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee List | Revature</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <style>
+        .filter-toolbar {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr auto;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .filter-toolbar input,
+        .filter-toolbar select {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 14px;
+            background: #fff;
+            color: var(--text-main);
+        }
+
+        .filter-toolbar input:focus,
+        .filter-toolbar select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(58, 108, 244, 0.12);
+        }
+
+        .filter-summary {
+            margin-bottom: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .no-match {
+            margin-top: 12px;
+            padding: 12px 14px;
+            border: 1px dashed var(--border);
+            border-radius: 8px;
+            color: var(--text-muted);
+            font-weight: 600;
+            display: none;
+        }
+
+        .table-container {
+            overflow-x: hidden;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: var(--text-main);
+            table-layout: fixed;
+        }
+
+        col.col-empid {
+            width: 6%;
+        }
+
+        col.col-name {
+            width: 13%;
+        }
+
+        col.col-email {
+            width: 17%;
+        }
+
+        col.col-role {
+            width: 8%;
+        }
+
+        col.col-dept {
+            width: 10%;
+        }
+
+        col.col-designation {
+            width: 12%;
+        }
+
+        col.col-manager {
+            width: 12%;
+        }
+
+        col.col-status {
+            width: 9%;
+        }
+
+        col.col-actions {
+            width: 13%;
+        }
+
+        th {
+            text-align: left;
+            padding: 10px 10px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            font-weight: 700;
+            background: #f8fafc;
+        }
+
+        td {
+            padding: 10px 10px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        .th-center,
+        .td-center {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background: rgba(31, 60, 136, 0.02);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .employee-id {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .employee-name {
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #1f2937;
+        }
+
+        .employee-meta,
+        .contact-line {
+            color: var(--text-muted);
+            font-size: 12px;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        .pill {
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            display: inline-block;
+        }
+
+        .role-admin {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+
+        .role-manager {
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .role-employee {
+            background: #f0fdf4;
+            color: #166534;
+        }
+
+        .status-active {
+            background: #ecfdf3;
+            color: #047857;
+        }
+
+        .status-inactive {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        .salary-value {
+            font-weight: 700;
+            color: #111827;
+            white-space: nowrap;
+        }
+
+        .empty-row {
+            text-align: center;
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 28px;
+        }
+
+        .action-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-group .btn {
+            padding: 5px 8px;
+            font-size: 11px;
+            min-width: 0;
+            text-align: center;
+        }
+
+        .inline-form {
+            margin: 0;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: #fff;
+            border: 1px solid #dc2626;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+            border-color: #b91c1c;
+        }
+
+        .btn-success {
+            background: #16a34a;
+            color: #fff;
+            border: 1px solid #16a34a;
+        }
+
+        .btn-success:hover {
+            background: #15803d;
+            border-color: #15803d;
+        }
+
+        .self-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .alert {
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #f0fff4;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert-error {
+            background: #fff5f5;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        @media (max-width: 992px) {
+            .filter-toolbar {
+                grid-template-columns: 1fr;
+            }
+
+            th {
+                font-size: 11px;
+                padding: 8px 6px;
+            }
+
+            td {
+                font-size: 12px;
+                padding: 8px 6px;
+            }
+
+            .action-group {
+                gap: 6px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar" th:replace="~{fragments/admin_sidebar :: adminSidebar('employees')}"></aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <a class="notif-bell-wrap" th:href="@{/notifications}" title="Notifications">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                        </svg>
+                        <span class="notif-badge" th:attr="data-count=${unreadCount}"
+                            th:text="${unreadCount > 0 ? unreadCount : ''}"
+                            th:if="${unreadCount != null and unreadCount > 0}"></span>
+                    </a>
+                    <span th:text="${user != null ? user.name : 'Admin'}">Admin</span>
+                    <div class="avatar" th:text="${user != null ? user.name.substring(0,1) : 'A'}">A</div>
+                </div>
+            </header>
+
+            <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-end;">
+                <div>
+                    <h1 class="page-title">Manage Employees</h1>
+                    <p class="page-subtitle">All employee records loaded from Oracle <b>employees</b> table.</p>
+                </div>
+                <a th:href="@{/admin/add-employee}" class="btn btn-primary">+ Register Employee</a>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+            <div class="card">
+                <div class="filter-summary">
+                    <span>Total rows: <span th:text="${totalEmployees}">0</span></span>
+                    <span>Filtered rows: <span id="visibleRows" th:text="${totalEmployees}">0</span></span>
+                </div>
+
+                <div class="filter-toolbar">
+                    <input type="text" id="searchInput"
+                        placeholder="Search by Employee ID or Name (e.g., 4 or Srinivas)">
+                    <select id="departmentFilter">
+                        <option value="">All Departments</option>
+                    </select>
+                    <select id="designationFilter">
+                        <option value="">All Designations</option>
+                    </select>
+                    <button type="button" class="btn btn-primary" id="resetFilters">Reset</button>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <colgroup>
+                            <col class="col-empid">
+                            <col class="col-name">
+                            <col class="col-email">
+                            <col class="col-role">
+                            <col class="col-dept">
+                            <col class="col-designation">
+                            <col class="col-manager">
+                            <col class="col-status">
+                            <col class="col-actions">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>Emp ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th class="th-center">Role</th>
+                                <th>Department</th>
+                                <th>Designation</th>
+                                <th>Manager</th>
+                                <th class="th-center">Status</th>
+                                <th class="th-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(employees)}">
+                                <td colspan="10" class="empty-row">No employee records available.</td>
+                            </tr>
+                            <tr th:each="emp : ${employees}" class="employee-row"
+                                th:attr="data-status=${emp.active ? 'active' : 'inactive'},
+                                    data-role=${#strings.toLowerCase(emp.role)},
+                                    data-emp-id=${emp.id},
+                                    data-name=${#strings.toLowerCase(emp.firstName)},
+                                    data-department=${emp.department != null ? #strings.toLowerCase(emp.department) : ''},
+                                    data-designation=${emp.designation != null ? #strings.toLowerCase(emp.designation) : ''}">
+                                <td class="employee-id" th:text="${emp.id}">1</td>
+                                <td>
+                                    <div class="employee-name" th:text="${emp.firstName}">John Doe</div>
+                                </td>
+                                <td class="contact-line" th:text="${emp.email}" th:title="${emp.email}">
+                                    john@revworkforce.com</td>
+                                <td class="td-center">
+                                    <span class="pill" th:classappend="${' role-' + #strings.toLowerCase(emp.role)}"
+                                        th:text="${emp.role}">EMPLOYEE</span>
+                                </td>
+                                <td
+                                    th:text="${emp.department != null && !emp.department.isEmpty() ? emp.department : 'N/A'}">
+                                    IT</td>
+                                <td
+                                    th:text="${emp.designation != null && !emp.designation.isEmpty() ? emp.designation : 'N/A'}">
+                                    Developer</td>
+                                <td class="contact-line" th:text="${emp.managerName != null ? emp.managerName : 'N/A'}"
+                                    th:title="${emp.managerName != null ? emp.managerName : 'N/A'}">
+                                    N/A
+                                </td>
+                                <td class="td-center">
+                                    <span class="pill"
+                                        th:classappend="${emp.active ? ' status-active' : ' status-inactive'}"
+                                        th:text="${emp.active ? 'Active' : 'Inactive'}">Active</span>
+                                </td>
+                                <td class="td-center">
+                                    <div class="action-group">
+                                        <a th:href="@{/admin/view-employee/{id}(id=${emp.id})}"
+                                            class="btn btn-secondary"
+                                            style="background-color: #64748b; color: white;">View</a>
+                                        <a th:href="@{/admin/edit-employee/{id}(id=${emp.id})}"
+                                            class="btn btn-primary">Edit</a>
+
+                                        <span class="self-label" th:if="${user != null and user.id == emp.id}">Current
+                                            User</span>
+
+                                        <form th:if="${emp.active and (user == null or user.id != emp.id)}"
+                                            th:action="@{/admin/deactivate-employee/{id}(id=${emp.id})}" method="post"
+                                            class="inline-form"
+                                            onsubmit="return confirm('Deactivate this account? User will not be able to login.');">
+                                            <button type="submit" class="btn btn-danger">Deactivate</button>
+                                        </form>
+
+                                        <form th:if="${!emp.active}"
+                                            th:action="@{/admin/reactivate-employee/{id}(id=${emp.id})}" method="post"
+                                            class="inline-form"
+                                            onsubmit="return confirm('Reactivate this account? User will be able to login.');">
+                                            <button type="submit" class="btn btn-success">Reactivate</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="noMatchMessage" class="no-match">No employees match the selected search/filter criteria.</div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById("searchInput");
+        const departmentFilter = document.getElementById("departmentFilter");
+        const designationFilter = document.getElementById("designationFilter");
+        const resetFilters = document.getElementById("resetFilters");
+        const visibleRows = document.getElementById("visibleRows");
+        const noMatchMessage = document.getElementById("noMatchMessage");
+        const rows = Array.from(document.querySelectorAll(".employee-row"));
+
+        function addOptions(selectEl, values) {
+            values.sort((a, b) => a.localeCompare(b));
+            values.forEach((value) => {
+                const option = document.createElement("option");
+                option.value = value.toLowerCase();
+                option.textContent = value;
+                selectEl.appendChild(option);
+            });
+        }
+
+        function setupDropdowns() {
+            if (rows.length === 0) return;
+
+            const departments = new Set();
+            const designations = new Set();
+
+            rows.forEach((row) => {
+                const department = (row.dataset.department || "").trim();
+                const designation = (row.dataset.designation || "").trim();
+
+                if (department && department !== "n/a") {
+                    departments.add(department);
+                }
+                if (designation && designation !== "n/a") {
+                    designations.add(designation);
+                }
+            });
+
+            addOptions(departmentFilter, Array.from(departments));
+            addOptions(designationFilter, Array.from(designations));
+        }
+
+        function applyFilters() {
+            if (rows.length === 0) {
+                visibleRows.textContent = "0";
+                return;
+            }
+
+            const query = searchInput.value.trim().toLowerCase();
+            const selectedDepartment = departmentFilter.value;
+            const selectedDesignation = designationFilter.value;
+            let visibleCount = 0;
+
+            rows.forEach((row) => {
+                const empId = (row.dataset.empId || "").toLowerCase();
+                const name = (row.dataset.name || "").toLowerCase();
+                const department = (row.dataset.department || "").toLowerCase();
+                const designation = (row.dataset.designation || "").toLowerCase();
+
+                const matchesSearch = !query || empId.includes(query) || name.includes(query);
+                const matchesDepartment = !selectedDepartment || department === selectedDepartment;
+                const matchesDesignation = !selectedDesignation || designation === selectedDesignation;
+
+                const show = matchesSearch && matchesDepartment && matchesDesignation;
+                row.style.display = show ? "" : "none";
+                if (show) visibleCount++;
+            });
+
+            visibleRows.textContent = visibleCount.toString();
+            noMatchMessage.style.display = visibleCount === 0 ? "block" : "none";
+        }
+
+        searchInput.addEventListener("input", applyFilters);
+        departmentFilter.addEventListener("change", applyFilters);
+        designationFilter.addEventListener("change", applyFilters);
+        resetFilters.addEventListener("click", () => {
+            searchInput.value = "";
+            departmentFilter.value = "";
+            designationFilter.value = "";
+            applyFilters();
+        });
+
+        setupDropdowns();
+        applyFilters();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Goal Detail | Revature</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <style>
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(130px, 1fr));
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .meta-card {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+            padding: 10px 12px;
+        }
+
+        .meta-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+            font-weight: 700;
+        }
+
+        .meta-value {
+            font-weight: 700;
+            color: #1f2937;
+            font-size: 14px;
+        }
+
+        .pill {
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+
+        .status-open {
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .status-not-started {
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .status-in-progress {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+
+        .status-completed {
+            background: #ecfdf3;
+            color: #047857;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .content-block {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            color: var(--text-main);
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            font-size: 14px;
+        }
+
+        .progress-track {
+            height: 10px;
+            border-radius: 999px;
+            background: #e5e7eb;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%);
+            border-radius: 999px;
+        }
+
+        .progress-value {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .form-group {
+            display: grid;
+            gap: 6px;
+            margin-top: 12px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .form-group textarea {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 14px;
+            min-height: 140px;
+            resize: vertical;
+            background: #fff;
+            color: var(--text-main);
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(58, 108, 244, 0.12);
+        }
+
+        .alert {
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 14px;
+            font-weight: 600;
+        }
+
+        .alert-success {
+            background: #ecfdf3;
+            border: 1px solid #a7f3d0;
+            color: #047857;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+        }
+
+        @media (max-width: 992px) {
+            .meta-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar" th:replace="~{manager_dashboard :: sidebar}"></aside>
+
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <a class="notif-bell-wrap" th:href="@{/notifications}" title="Notifications">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                        </svg>
+                        <span class="notif-badge" th:attr="data-count=${unreadCount}"
+                            th:text="${unreadCount > 0 ? unreadCount : ''}"
+                            th:if="${unreadCount != null and unreadCount > 0}"></span>
+                    </a>
+                    <span th:text="${user.name}">Manager Name</span>
+                    <div class="avatar" th:text="${user.name.substring(0,1)}">M</div>
+                </div>
+            </header>
+
+            <div class="page-header">
+                <h1 class="page-title">Goal Review Detail</h1>
+                <p class="page-subtitle">
+                    <a th:href="@{/manager/goals}" style="color: var(--primary); text-decoration: none;">Goals</a>
+                    / Goal Comment
+                </p>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+            <div class="card">
+                <div class="meta-grid">
+                    <div class="meta-card">
+                        <div class="meta-label">Employee</div>
+                        <div class="meta-value" th:text="${goal.employeeName}">John Doe</div>
+                    </div>
+                    <div class="meta-card">
+                        <div class="meta-label">Target Date</div>
+                        <div class="meta-value"
+                            th:text="${goal.targetDate != null ? #temporals.format(goal.targetDate, 'dd MMM yyyy') : 'N/A'}">
+                            30 Sep 2026</div>
+                    </div>
+                    <div class="meta-card">
+                        <div class="meta-label">Progress</div>
+                        <div class="meta-value"
+                            th:text="${(goal.completionPercentage != null ? goal.completionPercentage : 0) + '%'}">0%
+                        </div>
+                    </div>
+                    <div class="meta-card">
+                        <div class="meta-label">Goal Status</div>
+                        <div class="meta-value">
+                            <span class="pill"
+                                th:classappend="${goal.goalStatus == null || #strings.equalsIgnoreCase(goal.goalStatus, 'NOT_STARTED') || #strings.equalsIgnoreCase(goal.goalStatus, 'OPEN') ? ' status-not-started' : (#strings.equalsIgnoreCase(goal.goalStatus, 'IN_PROGRESS') ? ' status-in-progress' : ' status-completed')}"
+                                th:text="${goal.goalStatus != null ? #strings.capitalize(#strings.toLowerCase(goal.goalStatus.replace('_', ' '))) : 'Not started'}">Not
+                                started</span>
+                        </div>
+                    </div>
+                    <div class="meta-card">
+                        <div class="meta-label">Commented On</div>
+                        <div class="meta-value"
+                            th:text="${goal.managerCommentedOn != null ? #temporals.format(goal.managerCommentedOn, 'dd MMM yyyy') : 'Not commented'}">
+                            Not commented</div>
+                    </div>
+                </div>
+
+                <h2 class="section-title">Goal</h2>
+                <div class="content-block"
+                    th:text="${goal.goalTitle != null && !goal.goalTitle.isEmpty() ? goal.goalTitle : 'N/A'}">
+                    N/A
+                </div>
+
+                <h2 class="section-title">Goal Description</h2>
+                <div class="content-block"
+                    th:text="${goal.goalDescription != null && !goal.goalDescription.isEmpty() ? goal.goalDescription : 'N/A'}">
+                    N/A
+                </div>
+
+                <h2 class="section-title">Employee Progress Note</h2>
+                <div class="content-block"
+                    th:text="${goal.progressNote != null && !goal.progressNote.isEmpty() ? goal.progressNote : 'N/A'}">
+                    N/A
+                </div>
+
+                <h2 class="section-title">Completion Progress</h2>
+                <div class="content-block">
+                    <div class="progress-track">
+                        <div class="progress-fill"
+                            th:style="${'width:' + (goal.completionPercentage != null ? goal.completionPercentage : 0) + '%'}">
+                        </div>
+                    </div>
+                    <div class="progress-value"
+                        th:text="${(goal.completionPercentage != null ? goal.completionPercentage : 0) + '% completed'}">
+                        0% completed</div>
+                </div>
+
+                <h2 class="section-title">Manager Comment</h2>
+                <form th:action="@{/manager/performance-goals/{id}/comment(id=${goal.id})}" method="post">
+                    <div class="form-group">
+                        <label for="managerComment">Comment on progress and areas of improvement</label>
+                        <textarea id="managerComment" name="managerComment" maxlength="2000" required
+                            placeholder="Good progress. Focus more on quality and delivery consistency."
+                            th:text="${goal.managerComment}"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="finalRating">Final Rating (1-5)</label>
+                        <select id="finalRating" name="finalRating"
+                            style="padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; width: 200px;">
+                            <option value="">Select Rating (Optional)</option>
+                            <option value="1" th:selected="${goal.finalRating == 1}">1 - Poor</option>
+                            <option value="2" th:selected="${goal.finalRating == 2}">2 - Fair</option>
+                            <option value="3" th:selected="${goal.finalRating == 3}">3 - Good</option>
+                            <option value="4" th:selected="${goal.finalRating == 4}">4 - Very Good</option>
+                            <option value="5" th:selected="${goal.finalRating == 5}">5 - Excellent</option>
+                        </select>
+                    </div>
+                    <div style="margin-top: 12px; display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-primary">Save Comment</button>
+                        <a th:href="@{/manager/performance-goals}" class="btn"
+                            style="border: 1px solid var(--border); color: var(--text-main);">Back</a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

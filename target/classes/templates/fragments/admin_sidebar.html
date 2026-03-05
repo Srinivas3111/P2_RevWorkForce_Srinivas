@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <aside class="sidebar" th:fragment="adminSidebar(activeMenu)">
+        <div class="sidebar-header">
+            <a th:href="@{/admin/dashboard}" class="sidebar-logo">REVATURE</a>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a th:href="@{/admin/dashboard}" class="menu-link"
+                    th:classappend="${activeMenu == 'dashboard'} ? ' active' : ''">
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a th:href="@{/admin/employees}" class="menu-link"
+                    th:classappend="${activeMenu == 'employees'} ? ' active' : ''">
+                    <span>Manage Employees</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a th:href="@{/admin/departments}" class="menu-link"
+                    th:classappend="${activeMenu == 'departments'} ? ' active' : ''">
+                    <span>Manage Departments</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a th:href="@{/admin/designations}" class="menu-link"
+                    th:classappend="${activeMenu == 'designations'} ? ' active' : ''">
+                    <span>Manage Designations</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a th:href="@{/admin/announcements}" class="menu-link"
+                    th:classappend="${activeMenu == 'announcements'} ? ' active' : ''">
+                    <span>Manage Announcements</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a th:href="@{/admin/add-employee}" class="menu-link"
+                    th:classappend="${activeMenu == 'add-employee'} ? ' active' : ''">
+                    <span>Add Employee</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a th:href="@{/admin/leave-management}" class="menu-link"
+                    th:classappend="${activeMenu == 'leave-management'} ? ' active' : ''">
+                    <span>Leave Management</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a th:href="@{/admin/leave-reports}" class="menu-link"
+                    th:classappend="${activeMenu == 'leave-reports'} ? ' active' : ''">
+                    <span>Leave Reports</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a th:href="@{/admin/holiday-calendar}" class="menu-link"
+                    th:classappend="${activeMenu == 'holiday-calendar'} ? ' active' : ''">
+                    <span>Holiday Calendar</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a th:href="@{/admin/system-activity-log}" class="menu-link"
+                    th:classappend="${activeMenu == 'system-activity-log'} ? ' active' : ''">
+                    <span>Sys Activity Log</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a th:href="@{/admin/team-structure}" class="menu-link"
+                    th:classappend="${activeMenu == 'team-structure'} ? ' active' : ''">
+                    <span>Team Structure</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <a th:href="@{/logout}" class="btn btn-logout">Logout</a>
+        </div>
+    </aside>
+</body>
+
+</html>

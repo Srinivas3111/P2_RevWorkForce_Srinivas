@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Structure | Revature Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <style>
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 22px;
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        .section-badge {
+            background: var(--primary);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 999px;
+            margin-left: 6px;
+        }
+
+        .table-box {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        th {
+            text-align: left;
+            padding: 11px 14px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            font-weight: 700;
+            background: #f8fafc;
+        }
+
+        td {
+            padding: 11px 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge-role {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            background: #ede9fe;
+            color: #5b21b6;
+            border: 1px solid #ddd6fe;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-PENDING {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+
+        .status-APPROVED {
+            background: #ecfdf3;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+        }
+
+        .status-REJECTED {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .empty-state {
+            padding: 28px;
+            text-align: center;
+            color: var(--text-muted);
+            font-weight: 600;
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        .action-group {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-approve {
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            background: #ecfdf3;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-approve:hover {
+            background: #d1fae5;
+        }
+
+        .btn-reject {
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-reject:hover {
+            background: #fee2e2;
+        }
+
+        /* Reject modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: 16px;
+            padding: 28px 28px 24px;
+            max-width: 440px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #b91c1c;
+            margin-bottom: 6px;
+        }
+
+        .modal-sub {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .modal textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 13px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 90px;
+            box-sizing: border-box;
+        }
+
+        .modal textarea:focus {
+            outline: none;
+            border-color: #b91c1c;
+            box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.08);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .btn-cancel-modal {
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #ecfdf3;
+            border: 1px solid #a7f3d0;
+            color: #047857;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Reject Comment Modal -->
+    <div class="modal-overlay" id="rejectModal">
+        <div class="modal">
+            <div class="modal-title">⚠ Reject Leave Request</div>
+            <div class="modal-sub">Please provide a mandatory comment explaining the reason for rejection.</div>
+            <form id="rejectForm" method="post">
+                <textarea id="rejectComment" name="adminComment" placeholder="Enter rejection reason (required)..."
+                    required minlength="5"></textarea>
+                <input type="hidden" name="year" id="rejectYear">
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel-modal" onclick="closeRejectModal()">Cancel</button>
+                    <button type="submit" class="btn-reject">Confirm Reject</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="dashboard-wrapper">
+        <aside class="sidebar" th:replace="~{fragments/admin_sidebar :: adminSidebar('team-structure')}"></aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <a class="notif-bell-wrap" th:href="@{/notifications}" title="Notifications">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                        <span class="notif-badge" th:attr="data-count=${unreadCount}" th:text="${unreadCount > 0 ? unreadCount : ''}" th:if="${unreadCount != null and unreadCount > 0}"></span>
+                    </a>
+                    <span th:text="${user != null ? user.name : 'Admin'}">Admin</span>
+                    <div class="avatar" th:text="${user != null ? user.name.substring(0,1) : 'A'}">A</div>
+                </div>
+            </header>
+
+            <div class="page-header">
+                <h1 class="page-title">Team Structure</h1>
+                <p class="page-subtitle">View all managers in the system and manage their leave applications.</p>
+            </div>
+
+            <!-- Flash Messages -->
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+            <!-- ═══════════════════════════════════════ -->
+            <!-- SECTION 1 — All Managers               -->
+            <!-- ═══════════════════════════════════════ -->
+            <div class="card" style="margin-bottom: 24px;">
+                <div class="section-title">
+                    All Managers
+                    <span class="section-badge" th:text="${#lists.size(managers)}">0</span>
+                </div>
+
+                <div th:if="${#lists.isEmpty(managers)}" class="empty-state">
+                    No managers found in the system.
+                </div>
+
+                <div class="table-box" th:if="${!#lists.isEmpty(managers)}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Emp ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                                <th>Designation</th>
+                                <th>Phone</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="mgr : ${managers}">
+                                <td th:text="${mgr.id}">101</td>
+                                <td style="font-weight: 600;" th:text="${mgr.name}">Rajesh Kumar</td>
+                                <td th:text="${mgr.email}">rajesh@revature.com</td>
+                                <td th:text="${mgr.department != null ? mgr.department : '—'}">Engineering</td>
+                                <td th:text="${mgr.designation != null ? mgr.designation : '—'}">Team Lead</td>
+                                <td th:text="${mgr.phoneNumber != null ? mgr.phoneNumber : '—'}">9876543210</td>
+                                <td><span class="badge-role">MANAGER</span></td>
+                                <td>
+                                    <span th:if="${mgr.active}" style="color:#047857; font-weight:700;">● Active</span>
+                                    <span th:if="${!mgr.active}" style="color:#b91c1c; font-weight:700;">●
+                                        Inactive</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════ -->
+            <!-- SECTION 2 — Manager Leave Requests     -->
+            <!-- ═══════════════════════════════════════ -->
+            <div class="card">
+                <div class="section-title">
+                    Manager Leave Requests
+                    <span class="section-badge" th:text="${#lists.size(managerLeaves)}">0</span>
+                </div>
+
+                <div th:if="${#lists.isEmpty(managerLeaves)}" class="empty-state">
+                    No leave requests submitted by managers yet.
+                </div>
+
+                <div class="table-box" th:if="${!#lists.isEmpty(managerLeaves)}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Applied On</th>
+                                <th>Manager</th>
+                                <th>Leave Type</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Days</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="lv : ${managerLeaves}">
+                                <td
+                                    th:text="${lv.appliedOn != null ? #temporals.format(lv.appliedOn, 'dd MMM yyyy') : 'N/A'}">
+                                    02 Mar 2026</td>
+                                <td style="font-weight:600;" th:text="${lv.employeeName}">Rajesh Kumar</td>
+                                <td th:text="${lv.leaveTypeName != null ? lv.leaveTypeName : 'N/A'}">Annual Leave</td>
+                                <td
+                                    th:text="${lv.startDate != null ? #temporals.format(lv.startDate, 'dd MMM yyyy') : 'N/A'}">
+                                    10 Mar 2026</td>
+                                <td
+                                    th:text="${lv.endDate != null ? #temporals.format(lv.endDate, 'dd MMM yyyy') : 'N/A'}">
+                                    12 Mar 2026</td>
+                                <td th:text="${lv.leaveDays}">3</td>
+                                <td th:text="${#strings.isEmpty(lv.reason) ? '—' : lv.reason}">Family event</td>
+                                <td>
+                                    <span class="status-badge"
+                                        th:classappend="${'status-' + (lv.status != null ? lv.status : 'PENDING')}"
+                                        th:text="${lv.status != null ? lv.status : 'N/A'}">PENDING</span>
+                                </td>
+                                <td>
+                                    <!-- Approve / Reject only for PENDING leaves -->
+                                    <div th:if="${lv.status != null and lv.status == 'PENDING'}" class="action-group">
+                                        <!-- Approve Form (direct submit, no comment needed) -->
+                                        <form th:action="@{/admin/leave/{id}/approve(id=${lv.id})}" method="post"
+                                            onsubmit="return confirm('Approve this leave request?');">
+                                            <button type="submit" class="btn-approve">✔ Approve</button>
+                                        </form>
+                                        <!-- Reject — opens modal with mandatory comment -->
+                                        <button type="button" class="btn-reject" th:attr="data-id=${lv.id}"
+                                            onclick="openRejectModal(this)">✖ Reject</button>
+                                    </div>
+                                    <!-- Already decided -->
+                                    <span th:if="${lv.status == null or lv.status != 'PENDING'}"
+                                        style="color:#94a3b8; font-size:12px;">—</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function openRejectModal(btn) {
+            const leaveId = btn.getAttribute('data-id');
+            document.getElementById('rejectForm').action = '/admin/leave/' + leaveId + '/reject';
+            document.getElementById('rejectComment').value = '';
+            document.getElementById('rejectModal').classList.add('active');
+        }
+
+        function closeRejectModal() {
+            document.getElementById('rejectModal').classList.remove('active');
+        }
+
+        // Close on overlay click
+        document.getElementById('rejectModal').addEventListener('click', function (e) {
+            if (e.target === this) closeRejectModal();
+        });
+
+        // Ensure comment is not blank before submit
+        document.getElementById('rejectForm').addEventListener('submit', function (e) {
+            const comment = document.getElementById('rejectComment').value.trim();
+            if (comment.length < 5) {
+                e.preventDefault();
+                alert('Rejection comment is mandatory (minimum 5 characters).');
+            }
+        });
+    </script>
+</body>
+
+</html>

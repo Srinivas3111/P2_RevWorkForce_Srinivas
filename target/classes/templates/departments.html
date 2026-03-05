@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Departments | Revature</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <style>
+        .layout-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: minmax(280px, 1fr) auto;
+            gap: 14px;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            border: 1.5px solid #d7e2f0;
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-main);
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .form-group input::placeholder {
+            color: #8aa0ba;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 4px rgba(58, 108, 244, 0.16);
+        }
+
+        .field-note {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .form-card {
+            border: 1px solid #dce8fb;
+            background: linear-gradient(135deg, #f8fbff 0%, #eef5ff 100%);
+        }
+
+        .input-row .btn {
+            min-width: 170px;
+            height: 46px;
+            padding: 0 18px;
+            align-self: end;
+        }
+
+        .alert {
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .alert-success {
+            background: #f0fff4;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert-error {
+            background: #fff5f5;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+        }
+
+        th,
+        td {
+            padding: 13px 14px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        th {
+            background: linear-gradient(180deg, #f8fafc 0%, #eef4ff 100%);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            font-size: 11px;
+        }
+
+        tbody tr:hover td {
+            background: rgba(31, 60, 136, 0.03);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .inline-edit-form {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .inline-edit-form input {
+            min-width: 220px;
+            border: 1.5px solid #d7e2f0;
+            border-radius: 10px;
+            padding: 9px 11px;
+            background: #fff;
+            font-size: 13px;
+        }
+
+        .inline-edit-form input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(58, 108, 244, 0.12);
+        }
+
+        .inline-edit-form .btn {
+            white-space: nowrap;
+        }
+
+        .inline-delete-form {
+            margin: 0;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: #fff;
+            border: 1px solid #dc2626;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+            border-color: #b91c1c;
+        }
+
+        .btn-danger:disabled {
+            background: #fca5a5;
+            border-color: #fca5a5;
+            cursor: not-allowed;
+            opacity: 0.75;
+        }
+
+        .count-pill {
+            display: inline-block;
+            border-radius: 999px;
+            padding: 5px 11px;
+            font-size: 12px;
+            font-weight: 700;
+            background: linear-gradient(180deg, #eff6ff 0%, #e2ecff 100%);
+            color: #1949a8;
+        }
+
+        @media (max-width: 900px) {
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+
+            .input-row .btn {
+                width: 100%;
+            }
+
+            .inline-edit-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .inline-edit-form input {
+                min-width: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar" th:replace="~{fragments/admin_sidebar :: adminSidebar('departments')}"></aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <a class="notif-bell-wrap" th:href="@{/notifications}" title="Notifications">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                        <span class="notif-badge" th:attr="data-count=${unreadCount}" th:text="${unreadCount > 0 ? unreadCount : ''}" th:if="${unreadCount != null and unreadCount > 0}"></span>
+                    </a>
+                    <span th:text="${user != null ? user.name : 'Admin'}">Admin</span>
+                    <div class="avatar" th:text="${user != null ? user.name.substring(0,1) : 'A'}">A</div>
+                </div>
+            </header>
+
+            <div class="page-header">
+                <h1 class="page-title">Manage Departments</h1>
+                <p class="page-subtitle">Add, edit, delete and view all departments in the system.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">DP</div>
+                    <div class="stat-value" th:text="${totalDepartments}">0</div>
+                    <div class="stat-label">Total Departments</div>
+                </div>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+            <div class="layout-grid">
+                <section class="card form-card">
+                    <h2 class="page-title" style="font-size: 20px; margin-bottom: 10px;">Add Department</h2>
+                    <form th:action="@{/admin/departments}" method="post" class="input-row">
+                        <div class="form-group">
+                            <label for="departmentName">Department Name</label>
+                            <input id="departmentName" type="text" name="name" placeholder="Ex: Engineering" required maxlength="120">
+                            <p class="field-note">Use a clear, unique department name.</p>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Department</button>
+                    </form>
+                </section>
+
+                <section class="card">
+                    <h2 class="page-title" style="font-size: 20px; margin-bottom: 10px;">All Departments</h2>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 6%;">#</th>
+                                    <th style="width: 24%;">Department</th>
+                                    <th style="width: 16%;">Employees</th>
+                                    <th style="width: 38%;">Edit</th>
+                                    <th style="width: 16%;">Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${#lists.isEmpty(departments)}">
+                                    <td colspan="5">No departments found. Add your first department.</td>
+                                </tr>
+                                <tr th:each="dept, iterStat : ${departments}"
+                                    th:with="assignedCount=${departmentEmployeeCounts[dept.id] != null ? departmentEmployeeCounts[dept.id] : 0}">
+                                    <td th:text="${iterStat.count}">1</td>
+                                    <td th:text="${dept.name}">Engineering</td>
+                                    <td><span class="count-pill" th:text="${assignedCount}">0</span></td>
+                                    <td>
+                                        <form class="inline-edit-form" th:action="@{/admin/departments/{id}/update(id=${dept.id})}" method="post">
+                                            <input type="text" name="name" th:value="${dept.name}" maxlength="120" required>
+                                            <button type="submit" class="btn btn-primary">Update</button>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <form class="inline-delete-form" th:action="@{/admin/departments/{id}/delete(id=${dept.id})}" method="post"
+                                            onsubmit="return confirm('Delete this department?');">
+                                            <button type="submit" class="btn btn-danger"
+                                                th:disabled="${assignedCount > 0}"
+                                                th:title="${assignedCount > 0 ? 'Cannot delete while employees are assigned' : 'Delete department'}">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>
+

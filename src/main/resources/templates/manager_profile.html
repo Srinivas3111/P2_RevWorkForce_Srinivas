@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | Revature</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <style>
+        .profile-container {
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        .alert {
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 14px;
+            font-weight: 600;
+        }
+
+        .alert-success {
+            background: #ecfdf3;
+            border: 1px solid #6ee7b7;
+            color: #065f46;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+        }
+
+        .profile-card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: 800;
+        }
+
+        .profile-intro h2 {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .profile-intro p {
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .info-item label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-item span {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .edit-form {
+            background: #f8fafc;
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .form-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #4b5563;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 10px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(31, 60, 136, 0.1);
+        }
+
+        .form-actions {
+            margin-top: 24px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-save {
+            padding: 10px 24px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar" th:replace="~{manager_dashboard :: sidebar}"></aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <a class="notif-bell-wrap" th:href="@{/notifications}" title="Notifications">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                        </svg>
+                        <span class="notif-badge" th:attr="data-count=${unreadCount}"
+                            th:text="${unreadCount > 0 ? unreadCount : ''}"
+                            th:if="${unreadCount != null and unreadCount > 0}"></span>
+                    </a>
+                    <span th:text="${user.name}">Manager Name</span>
+                    <div class="avatar" th:text="${user.name.substring(0,1)}">M</div>
+                </div>
+            </header>
+
+            <div class="page-header">
+                <h1 class="page-title">My Profile</h1>
+                <p class="page-subtitle">View your professional details and manage your direct reports.</p>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+            <div class="profile-container" style="max-width: 1200px;">
+                <!-- Section 1: Manager Information -->
+                <div class="profile-card">
+                    <div class="form-title"
+                        style="font-size: 20px; border-bottom: 2px solid var(--primary-light); padding-bottom: 8px; margin-bottom: 25px;">
+                        Manager Information
+                    </div>
+                    <div class="profile-header">
+                        <div class="profile-avatar" th:text="${user.name.substring(0,1)}">M</div>
+                        <div class="profile-intro">
+                            <h2 th:text="${user.name}">John Doe</h2>
+                            <p th:text="${user.designation + ' | ' + user.department}">Manager | Engineering</p>
+                        </div>
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Employee ID</label>
+                            <span th:text="${user.id}">101</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Email Address</label>
+                            <span th:text="${user.email}">john.doe@revature.com</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Mobile Number</label>
+                            <span th:text="${user.phoneNumber}">9876543210</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Emergency Contact</label>
+                            <span th:text="${user.emergencyContactNumber}">9876543211</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Joining Date</label>
+                            <span th:text="${user.joiningDate}">01 Jan 2024</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Role</label>
+                            <span th:text="${user.role}">MANAGER</span>
+                        </div>
+                        <div class="info-item" style="grid-column: span 2;">
+                            <label>Residential Address</label>
+                            <span th:text="${user.address}">123 Revature Way, Tech City</span>
+                        </div>
+                    </div>
+
+                    <!-- Compact Update Form -->
+                    <form th:action="@{/manager/update-profile}" method="POST" class="edit-form"
+                        style="margin-top: 20px;">
+                        <div class="form-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                            Update Contact Information
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="phoneNumber">Mobile Number</label>
+                                <input type="text" id="phoneNumber" name="phoneNumber" th:value="${user.phoneNumber}"
+                                    required>
+                            </div>
+                            <div class="form-group">
+                                <label for="emergencyContactNumber">Emergency Contact</label>
+                                <input type="text" id="emergencyContactNumber" name="emergencyContactNumber"
+                                    th:value="${user.emergencyContactNumber}" required>
+                            </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label for="address">Residential Address</label>
+                                <input type="text" id="address" name="address" th:value="${user.address}" required>
+                            </div>
+                        </div>
+                        <div class="form-actions" style="margin-top: 15px;">
+                            <button type="submit" class="btn btn-primary btn-save"
+                                style="padding: 8px 16px; font-size: 13px;">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Section 2: Team Members Overview -->
+                <div class="profile-card" style="margin-top: 20px;">
+                    <div class="form-title"
+                        style="font-size: 20px; border-bottom: 2px solid var(--primary-light); padding-bottom: 8px; margin-bottom: 25px;">
+                        Team Members Overview
+                    </div>
+
+                    <div th:if="${#lists.isEmpty(teamMembers)}"
+                        style="text-align: center; padding: 40px; color: var(--text-muted); border: 2px dashed var(--border); border-radius: 12px;">
+                        <span style="font-size: 40px; display: block; margin-bottom: 10px;">👥</span>
+                        <p style="font-weight: 600;">No direct reportees found.</p>
+                    </div>
+
+                    <div class="table-wrap" th:if="${not #lists.isEmpty(teamMembers)}">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Employee ID</th>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Designation</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="member : ${teamMembers}">
+                                    <td th:text="${member.id}" style="font-weight: 700; color: var(--primary);">101</td>
+                                    <td th:text="${member.name}" style="font-weight: 600; color: #1f2937;">John Doe</td>
+                                    <td th:text="${member.department}">Engineering</td>
+                                    <td th:text="${member.designation}">SDE-1</td>
+                                    <td th:text="${member.phoneNumber}">9876543210</td>
+                                    <td th:text="${member.email}">john@revature.com</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

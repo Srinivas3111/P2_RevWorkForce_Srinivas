@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Directory | Revature</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <style>
+        .search-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .search-row input {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 14px;
+            background: #fff;
+            color: var(--text-main);
+        }
+
+        .search-row input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(58, 108, 244, 0.12);
+        }
+
+        .summary-row {
+            margin-bottom: 12px;
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: var(--text-main);
+            min-width: 760px;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 14px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            font-weight: 700;
+            background: #f8fafc;
+        }
+
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .emp-id {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .empty-state {
+            padding: 24px;
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            color: var(--text-muted);
+            text-align: center;
+            font-weight: 600;
+            background: #fff;
+        }
+
+        @media (max-width: 720px) {
+            .search-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar"
+            th:replace="${user.role == 'MANAGER'} ? ~{manager_dashboard :: sidebar} : ~{employee_dashboard :: sidebar}">
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <a class="notif-bell-wrap" th:href="@{/notifications}" title="Notifications">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                        </svg>
+                        <span class="notif-badge" th:attr="data-count=${unreadCount}"
+                            th:text="${unreadCount > 0 ? unreadCount : ''}"
+                            th:if="${unreadCount != null and unreadCount > 0}"></span>
+                    </a>
+                    <span th:text="${user.name}">Employee Name</span>
+                    <div class="avatar" th:text="${user.name.substring(0,1)}">E</div>
+                </div>
+            </header>
+
+            <div class="page-header">
+                <h1 class="page-title">Employee Directory</h1>
+                <p class="page-subtitle">Search employees by name, employee ID, department, or designation.</p>
+            </div>
+
+            <style>
+                .enhanced-search {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 12px;
+                    background: linear-gradient(to right, #ffffff, #f8fafc);
+                    padding: 24px;
+                    border-radius: 12px;
+                    border: 1px solid var(--border);
+                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+                    margin-bottom: 24px;
+                }
+
+                .enhanced-search h2 {
+                    margin: 0;
+                    font-size: 18px;
+                    color: #1e293b;
+                    font-weight: 700;
+                }
+
+                .search-inputs {
+                    display: grid;
+                    grid-template-columns: 1fr auto;
+                    gap: 12px;
+                }
+
+                .search-inputs input {
+                    width: 100%;
+                    padding: 12px 16px;
+                    border: 2px solid #e2e8f0;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    transition: all 0.2s;
+                    box-sizing: border-box;
+                }
+
+                .search-inputs input:focus {
+                    outline: none;
+                    border-color: #3b82f6;
+                    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+                }
+
+                .search-inputs button {
+                    padding: 12px 24px;
+                    background: #3b82f6;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    font-weight: 600;
+                    font-size: 15px;
+                    cursor: pointer;
+                    transition: background 0.2s;
+                }
+
+                .search-inputs button:hover {
+                    background: #2563eb;
+                }
+
+                .emp-card {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                }
+
+                .emp-avatar {
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    background: linear-gradient(135deg, #60a5fa, #3b82f6);
+                    color: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-weight: 700;
+                    font-size: 16px;
+                }
+
+                .emp-details {
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                .emp-name {
+                    font-weight: 700;
+                    color: #1e293b;
+                }
+
+                .emp-email {
+                    font-size: 12px;
+                    color: #64748b;
+                }
+            </style>
+
+            <div class="enhanced-search">
+                <h2>Search Employees</h2>
+                <form class="search-inputs" method="get" th:action="@{/employee/directory}">
+                    <input type="text" name="q" th:value="${searchQuery}"
+                        placeholder="Search by Employee ID or Name...">
+                    <button type="submit">Search Directory</button>
+                </form>
+            </div>
+
+            <div class="summary-row">
+                <span>Total Results: <strong th:text="${employees.size()}">0</strong></span>
+            </div>
+
+            <div th:if="${#lists.isEmpty(employees)}" class="empty-state">
+                No employee records match the search criteria.
+            </div>
+
+            <div class="table-container" th:if="${!#lists.isEmpty(employees)}">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Employee ID</th>
+                            <th>Employee</th>
+                            <th>Department</th>
+                            <th>Designation</th>
+                            <th>Official Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="emp : ${employees}">
+                            <td class="emp-id" th:text="${emp.id}">1001</td>
+                            <td>
+                                <div class="emp-card">
+                                    <div class="emp-avatar" th:text="${emp.firstName.substring(0, 1)}">
+                                        JD</div>
+                                    <div class="emp-details">
+                                        <span class="emp-name" th:text="${emp.firstName}">John
+                                            Doe</span>
+                                        <span class="emp-email"
+                                            th:text="${emp.email != null && !emp.email.isBlank() ? emp.email : 'N/A'}">john@revworkforce.com</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td
+                                th:text="${emp.department != null && !emp.department.isBlank() ? emp.department : 'N/A'}">
+                                Engineering</td>
+                            <td
+                                th:text="${emp.designation != null && !emp.designation.isBlank() ? emp.designation : 'N/A'}">
+                                Developer</td>
+                            <td th:text="${emp.email != null && !emp.email.isBlank() ? emp.email : 'N/A'}">
+                                john@revworkforce.com</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

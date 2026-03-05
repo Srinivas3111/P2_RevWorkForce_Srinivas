@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Employee Profile | Revature</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <style>
+        .profile-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .profile-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border);
+        }
+
+        .profile-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .profile-table td {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .label-cell {
+            width: 30%;
+            background-color: #f8fafc;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 12px;
+        }
+
+        .value-cell {
+            color: #1e293b;
+            font-weight: 500;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .status-inactive {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: #475569;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .btn-back:hover {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar" th:replace="~{fragments/admin_sidebar :: adminSidebar('employees')}"></aside>
+
+        <main class="main-content">
+            <div class="profile-container">
+                <a th:href="@{/admin/employees}" class="btn-back">
+                    &larr; Back to Employee List
+                </a>
+
+                <div class="page-header">
+                    <h1 class="page-title">Employee Profile</h1>
+                    <p class="page-subtitle">Full details for <span th:text="${employee.firstName}"
+                            style="font-weight: 700; color: var(--primary);">Employee Name</span></p>
+                </div>
+
+                <table class="profile-table">
+                    <tr>
+                        <td class="label-cell">Employee ID</td>
+                        <td class="value-cell" th:text="${employee.id}">0</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Full Name</td>
+                        <td class="value-cell" th:text="${employee.firstName}">John Doe</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Email Address</td>
+                        <td class="value-cell" th:text="${employee.email}">john@revworkforce.com</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Phone Number</td>
+                        <td class="value-cell" th:text="${employee.phoneNumber != null ? employee.phoneNumber : 'N/A'}">
+                            N/A</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Gender</td>
+                        <td class="value-cell" th:text="${employee.gender}">N/A</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Date of Birth</td>
+                        <td class="value-cell" th:text="${employee.dateOfBirth}">N/A</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Department</td>
+                        <td class="value-cell"
+                            th:text="${employee.department != null && !employee.department.isEmpty() ? employee.department : 'N/A'}">
+                            IT</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Designation</td>
+                        <td class="value-cell"
+                            th:text="${employee.designation != null && !employee.designation.isEmpty() ? employee.designation : 'N/A'}">
+                            Developer</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Joining Date</td>
+                        <td class="value-cell" th:text="${employee.joiningDate}">N/A</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Salary</td>
+                        <td class="value-cell"
+                            th:text="${'$' + #numbers.formatDecimal(employee.salary, 1, 'COMMA', 2, 'POINT')}">$0.00
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Role</td>
+                        <td class="value-cell">
+                            <span class="pill" th:classappend="${' role-' + #strings.toLowerCase(employee.role)}"
+                                th:text="${employee.role}">EMPLOYEE</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Reporting Manager</td>
+                        <td class="value-cell"
+                            th:text="${employee.managerName != null ? employee.managerName : 'No Direct Manager'}">N/A
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Account Status</td>
+                        <td class="value-cell">
+                            <span class="status-pill"
+                                th:classappend="${employee.active ? 'status-active' : 'status-inactive'}"
+                                th:text="${employee.active ? 'Active' : 'Inactive'}">Active</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Home Address</td>
+                        <td class="value-cell"
+                            th:text="${employee.address != null && !employee.address.isEmpty() ? employee.address : 'No Address Provided'}">
+                            N/A</td>
+                    </tr>
+                </table>
+
+                <div style="margin-top: 30px; display: flex; gap: 12px;">
+                    <a th:href="@{/admin/edit-employee/{id}(id=${employee.id})}" class="btn btn-primary"
+                        style="padding: 12px 24px;">Edit Profile</a>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

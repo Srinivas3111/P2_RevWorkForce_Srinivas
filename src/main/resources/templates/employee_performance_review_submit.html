@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Performance Review | Revature</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <style>
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .form-group {
+            display: grid;
+            gap: 6px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 14px;
+            background: #fff;
+            color: var(--text-main);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(58, 108, 244, 0.12);
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .alert {
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 14px;
+            font-weight: 600;
+        }
+
+        .alert-success {
+            background: #ecfdf3;
+            border: 1px solid #a7f3d0;
+            color: #047857;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+        }
+
+        .alert-info {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1d4ed8;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-draft {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-submitted {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .status-reviewed {
+            background: #ecfdf3;
+            color: #047857;
+        }
+
+        .period-loader {
+            display: flex;
+            gap: 8px;
+            align-items: end;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .review-page-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
+            gap: 16px;
+            align-items: start;
+        }
+
+        .side-card {
+            position: sticky;
+            top: 20px;
+        }
+
+        .side-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .status-list {
+            display: grid;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .status-item {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+            padding: 10px 12px;
+        }
+
+        .status-item.period-active {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 2px rgba(58, 108, 244, 0.12);
+        }
+
+        .status-period {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 6px;
+        }
+
+        .status-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .status-date {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            .review-page-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .side-card {
+                position: static;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a th:href="@{/employee/dashboard}" class="sidebar-logo">REVATURE</a>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a th:href="@{/employee/dashboard}" class="menu-link">
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/employee/profile}" class="menu-link">
+                        <span>My Profile</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/employee/leave/apply}" class="menu-link">
+                        <span>Leave Applications</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/employee/leave/balance}" class="menu-link">
+                        <span>Leave Balance</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/employee/holiday-calendar}" class="menu-link">
+                        <span>Holiday Calendar</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/employee/performance-reviews}" class="menu-link active">
+                        <span>Performance Reviews</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/employee/goals}" class="menu-link">
+                        <span>My Goals</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/employee/announcements}" class="menu-link">
+                        <span>Announcements</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/employee/directory}" class="menu-link">
+                        <span>Employee Directory</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <a th:href="@{/logout}" class="btn btn-logout" style="width: 100%; text-align: center;">Logout</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <a class="notif-bell-wrap" th:href="@{/notifications}" title="Notifications">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                        <span class="notif-badge" th:attr="data-count=${unreadCount}" th:text="${unreadCount > 0 ? unreadCount : ''}" th:if="${unreadCount != null and unreadCount > 0}"></span>
+                    </a>
+                    <span th:text="${user.name}">Employee Name</span>
+                    <div class="avatar" th:text="${user.name.substring(0,1)}">E</div>
+                </div>
+            </header>
+
+            <div class="page-header">
+                <h1 class="page-title">Create Performance Review Document</h1>
+                <p class="page-subtitle">Create a draft first, then submit to your manager for evaluation.</p>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+            <div th:if="${reviewLocked}" class="alert alert-info">
+                This review is already submitted and cannot be edited by employee.
+            </div>
+
+            <div class="review-page-grid">
+                <div class="card">
+                    <form class="period-loader" method="get" th:action="@{/employee/performance-review/submit}">
+                        <div class="form-group" style="margin: 0;">
+                            <label for="selectedPeriod">Load Review Period</label>
+                            <input id="selectedPeriod"
+                                   type="text"
+                                   name="reviewPeriod"
+                                   maxlength="40"
+                                   required
+                                   th:value="${selectedReviewPeriod}"
+                                   placeholder="Q1 2026">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Load</button>
+                    </form>
+
+                    <p class="help-text">
+                        Review period: <strong th:text="${selectedReviewPeriod}">Q1 2026</strong>
+                        <span th:if="${existingReview != null}" style="margin-left: 10px;">
+                            Status:
+                            <span class="status-pill"
+                                  th:classappend="${existingReview.status != null ? ' status-' + #strings.toLowerCase(existingReview.status) : ' status-draft'}"
+                                  th:text="${existingReview.status != null ? existingReview.status : 'DRAFT'}">DRAFT</span>
+                        </span>
+                    </p>
+                    <p class="help-text">All text fields are mandatory and must be at least 20 characters.</p>
+
+                    <form th:action="@{/employee/performance-review/submit}" method="post" class="form-grid">
+                        <div class="form-group">
+                            <label for="reviewPeriod">Review Period</label>
+                            <input id="reviewPeriod"
+                                   name="reviewPeriod"
+                                   maxlength="40"
+                                   required
+                                   readonly
+                                   th:value="${selectedReviewPeriod}"
+                                   placeholder="Q1 2026">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="selfRating">Self Assessment Rating (1-5)</label>
+                            <select id="selfRating" name="selfRating" required th:disabled="${reviewLocked}">
+                                <option value="">Select rating</option>
+                                <option value="1" th:selected="${existingReview != null and existingReview.selfRating == 1}">1 - Poor</option>
+                                <option value="2" th:selected="${existingReview != null and existingReview.selfRating == 2}">2 - Needs Improvement</option>
+                                <option value="3" th:selected="${existingReview != null and existingReview.selfRating == 3}">3 - Meets Expectations</option>
+                                <option value="4" th:selected="${existingReview != null and existingReview.selfRating == 4}">4 - Exceeds Expectations</option>
+                                <option value="5" th:selected="${existingReview != null and existingReview.selfRating == 5}">5 - Outstanding</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group full">
+                            <label for="achievements">Key Deliverables</label>
+                            <textarea id="achievements"
+                                      name="achievements"
+                                      maxlength="2000"
+                                      minlength="20"
+                                      required
+                                      th:disabled="${reviewLocked}"
+                                      placeholder="Describe tasks/deliverables completed in this review cycle."
+                                      th:text="${existingReview != null ? existingReview.achievements : ''}"></textarea>
+                        </div>
+
+                        <div class="form-group full">
+                            <label for="selfAssessment">Accomplishments</label>
+                            <textarea id="selfAssessment"
+                                      name="selfAssessment"
+                                      maxlength="3000"
+                                      minlength="20"
+                                      required
+                                      th:disabled="${reviewLocked}"
+                                      placeholder="Describe achievements, impact, and outcomes."
+                                      th:text="${existingReview != null ? existingReview.selfAssessment : ''}"></textarea>
+                        </div>
+
+                        <div class="form-group full">
+                            <label for="challenges">Areas of Improvement</label>
+                            <textarea id="challenges"
+                                      name="challenges"
+                                      maxlength="2000"
+                                      minlength="20"
+                                      required
+                                      th:disabled="${reviewLocked}"
+                                      placeholder="Describe gaps and improvement actions."
+                                      th:text="${existingReview != null ? existingReview.challenges : ''}"></textarea>
+                        </div>
+
+                        <input type="hidden" th:if="${reviewLocked}" name="selfRating"
+                               th:value="${existingReview != null ? existingReview.selfRating : ''}" />
+
+                        <div class="form-group full" style="display: flex; gap: 10px;">
+                            <button type="submit"
+                                    name="action"
+                                    value="draft"
+                                    class="btn"
+                                    style="border: 1px solid var(--border); color: var(--text-main);"
+                                    th:if="${!reviewLocked}">Save Draft</button>
+                            <button type="submit"
+                                    name="action"
+                                    value="submit"
+                                    class="btn btn-primary"
+                                    th:if="${!reviewLocked}">Submit Review</button>
+                        </div>
+                    </form>
+                </div>
+
+                <aside class="card side-card">
+                    <h2 class="side-title">My Review Status</h2>
+                    <p class="help-text" style="margin-bottom: 8px;">Review Period and current status.</p>
+
+                    <div th:if="${#lists.isEmpty(reviewHistory)}" class="empty-state" style="margin: 0; padding: 14px;">
+                        No performance reviews created yet.
+                    </div>
+
+                    <div th:if="${!#lists.isEmpty(reviewHistory)}" class="status-list">
+                        <div class="status-item"
+                             th:classappend="${selectedReviewPeriod != null and selectedReviewPeriod.equals(r.reviewPeriod)} ? ' period-active'"
+                             th:each="r : ${reviewHistory}">
+                            <div class="status-period" th:text="${r.reviewPeriod}">Q1 2026</div>
+                            <div class="status-row">
+                                <span class="status-pill"
+                                      th:classappend="${r.status != null ? ' status-' + #strings.toLowerCase(r.status) : ' status-draft'}"
+                                      th:text="${r.status != null ? r.status : 'DRAFT'}">DRAFT</span>
+                                <span class="status-date"
+                                      th:text="${r.submittedOn != null ? #temporals.format(r.submittedOn, 'dd MMM yyyy') : 'N/A'}">03 Mar 2026</span>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>
